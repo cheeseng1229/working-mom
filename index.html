@@ -1,0 +1,2046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HarmonyHub | Adeline's Daily Music & Motherhood Sanctuary</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Google Fonts: Plus Jakarta Sans & Playfair Display -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            serif: ['"Playfair Display"', 'serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            harmony: {
+              50: '#fdf8f6',
+              100: '#f2e8e5',
+              200: '#eaddd7',
+              300: '#e0cec7',
+              400: '#d2bab0',
+              500: '#bc9c8f',
+              600: '#9e7a6c',
+              700: '#7d5d51',
+              800: '#5c433a',
+              900: '#3d2b25',
+            },
+            sage: {
+              50: '#f4f7f4',
+              100: '#e5ebe5',
+              500: '#5f8d6d',
+              600: '#487054',
+              700: '#35533e',
+            },
+            coral: {
+              50: '#fff5f2',
+              100: '#feeae3',
+              500: '#f9735b',
+              600: '#e0533a',
+            },
+            music: {
+              gold: '#eab308',
+              lavender: '#8b5cf6',
+              teal: '#0d9488',
+              rose: '#f43f5e'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbars and Print Optimization */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.03);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(188, 156, 143, 0.4);
+      border-radius: 999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(188, 156, 143, 0.7);
+    }
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white !important; color: black !important; }
+      .print-full-width { width: 100% !important; margin: 0 !important; box-shadow: none !important; }
+    }
+    .solfege-key:active {
+      transform: translateY(2px) scale(0.96);
+    }
+  </style>
+</head>
+<body class="bg-[#faf7f5] text-[#332a26] min-h-screen flex flex-col font-sans antialiased selection:bg-coral-100 selection:text-coral-600">
+
+  <!-- Top Notification / Affirmation Banner -->
+  <div class="bg-gradient-to-r from-coral-500 via-amber-500 to-sage-500 text-white text-xs md:text-sm py-2 px-4 shadow-sm no-print">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center justify-center bg-white/20 px-2 py-0.5 rounded text-[11px] font-semibold uppercase tracking-wider">Teacher-Mom Spark</span>
+        <span id="bannerAffirmation" class="truncate font-medium">"Teaching music builds their heart; loving your two little ones anchors their world."</span>
+      </div>
+      <div class="flex items-center gap-3 shrink-0">
+        <button onclick="playChimeChord()" title="Play Harmony Chime" class="hover:bg-white/20 p-1 rounded-full transition text-white">
+          <i data-lucide="music" class="w-4 h-4"></i>
+        </button>
+        <span id="currentDateDisplay" class="font-mono text-xs opacity-90 hidden sm:inline"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header Navigation -->
+  <header class="bg-white/80 backdrop-blur-md border-b border-harmony-200 sticky top-0 z-40 no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-coral-500 to-amber-400 flex items-center justify-center text-white shadow-md shadow-coral-500/20">
+          <i data-lucide="music-2" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xl font-bold font-serif tracking-tight text-harmony-900">HarmonyHub</h1>
+            <span class="bg-sage-100 text-sage-700 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-sage-500/20">SG MOE Edition</span>
+          </div>
+          <p class="text-xs text-harmony-600">Adeline's Daily Music Education & Motherhood Companion</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex items-center gap-1 sm:gap-2">
+        <button onclick="switchTab('daily-hub')" id="tab-btn-daily-hub" class="tab-btn px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition bg-coral-500 text-white shadow-sm">
+          <i data-lucide="calendar-check" class="w-4 h-4"></i>
+          <span class="hidden md:inline">Today's</span> Focus & Logger
+        </button>
+        <button onclick="switchTab('moe-curriculum')" id="tab-btn-moe-curriculum" class="tab-btn px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition text-harmony-700 hover:bg-harmony-100">
+          <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+          <span class="hidden md:inline">MOE</span> Music Syllabus
+        </button>
+        <button onclick="switchTab('music-sparks')" id="tab-btn-music-sparks" class="tab-btn px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition text-harmony-700 hover:bg-harmony-100">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          Teaching Sparks
+        </button>
+        <button onclick="switchTab('two-kids')" id="tab-btn-two-kids" class="tab-btn px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition text-harmony-700 hover:bg-harmony-100">
+          <i data-lucide="baby" class="w-4 h-4"></i>
+          My 2 Kids Matters
+        </button>
+      </nav>
+
+      <!-- Quick Action Utilities -->
+      <div class="hidden lg:flex items-center gap-2">
+        <button onclick="openLessonPlanModal()" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-harmony-300 text-harmony-800 hover:bg-harmony-100 flex items-center gap-1.5 transition" title="Draft Lesson Plan">
+          <i data-lucide="file-plus-2" class="w-3.5 h-3.5 text-coral-500"></i>
+          Quick Plan
+        </button>
+        <button onclick="printView()" class="p-2 text-harmony-600 hover:text-harmony-900 hover:bg-harmony-100 rounded-lg transition" title="Print Today's Schedule & Notes">
+          <i data-lucide="printer" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Body -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- ========================================== -->
+    <!-- TAB 1: DAILY FOCUS & LOGGER (Default View) -->
+    <!-- ========================================== -->
+    <div id="tab-daily-hub" class="tab-content space-y-6">
+      
+      <!-- Welcome & Quick Sounding Board Header -->
+      <div class="bg-gradient-to-br from-white via-[#fffaf7] to-coral-50/40 rounded-3xl p-6 sm:p-7 border border-harmony-200/80 shadow-sm relative overflow-hidden">
+        <div class="absolute -right-6 -bottom-6 w-36 h-36 bg-coral-500/5 rounded-full blur-2xl pointer-events-none"></div>
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div class="space-y-1">
+            <div class="flex items-center gap-2">
+              <span class="text-xs uppercase tracking-wider font-bold text-coral-600 bg-coral-100 px-2.5 py-0.5 rounded-full">Good Morning, Teacher Adeline!</span>
+              <span id="dayBadge" class="text-xs font-medium text-harmony-600 font-mono">Term Week Focus</span>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-serif font-bold text-harmony-900">Let's find harmony in classroom & home today.</h2>
+            <p class="text-sm text-harmony-700 max-w-2xl">
+              Balance your Singapore MOE Primary 1–6 music lesson preparations alongside your 2 kids' routines and homework.
+            </p>
+          </div>
+
+          <!-- Solfege Pitch Bell Strip (Interactive Web Audio) -->
+          <div class="bg-white/90 backdrop-blur rounded-2xl p-3 border border-harmony-200 shadow-sm shrink-0">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[11px] font-bold text-harmony-600 uppercase tracking-wider flex items-center gap-1">
+                <i data-lucide="bell" class="w-3 h-3 text-music-gold"></i> Solfège Pitch Bells
+              </span>
+              <span class="text-[10px] text-harmony-400">Click to sound</span>
+            </div>
+            <div class="flex items-center gap-1 sm:gap-1.5">
+              <button onclick="playNote(261.63, 'Do')" class="solfege-key px-2.5 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 font-mono text-xs font-bold transition">Do</button>
+              <button onclick="playNote(293.66, 'Re')" class="solfege-key px-2.5 py-2 rounded-xl bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 font-mono text-xs font-bold transition">Re</button>
+              <button onclick="playNote(329.63, 'Mi')" class="solfege-key px-2.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 font-mono text-xs font-bold transition">Mi</button>
+              <button onclick="playNote(349.23, 'Fa')" class="solfege-key px-2.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 font-mono text-xs font-bold transition">Fa</button>
+              <button onclick="playNote(392.00, 'Sol')" class="solfege-key px-2.5 py-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-700 border border-teal-200 font-mono text-xs font-bold transition">Sol</button>
+              <button onclick="playNote(440.00, 'La')" class="solfege-key px-2.5 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-mono text-xs font-bold transition">La</button>
+              <button onclick="playNote(493.88, 'Ti')" class="solfege-key px-2.5 py-2 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 font-mono text-xs font-bold transition">Ti</button>
+              <button onclick="playNote(523.25, 'Do*')" class="solfege-key px-2.5 py-2 rounded-xl bg-pink-50 hover:bg-pink-100 text-pink-700 border border-pink-200 font-mono text-xs font-bold transition">Do'</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Today's Quick Summary Metrics -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-5 border-t border-harmony-200/60">
+          <div class="bg-white/80 rounded-xl p-3 border border-harmony-200">
+            <span class="text-[11px] font-semibold text-harmony-600 block">Classroom Tasks</span>
+            <div class="flex items-baseline gap-1 mt-1">
+              <span id="statSchoolPending" class="text-xl font-bold text-coral-600 font-mono">0</span>
+              <span class="text-xs text-harmony-500">remaining</span>
+            </div>
+          </div>
+          <div class="bg-white/80 rounded-xl p-3 border border-harmony-200">
+            <span class="text-[11px] font-semibold text-harmony-600 block">Kids & Home Items</span>
+            <div class="flex items-baseline gap-1 mt-1">
+              <span id="statHomePending" class="text-xl font-bold text-sage-600 font-mono">0</span>
+              <span class="text-xs text-harmony-500">remaining</span>
+            </div>
+          </div>
+          <div class="bg-white/80 rounded-xl p-3 border border-harmony-200">
+            <span class="text-[11px] font-semibold text-harmony-600 block">Today's Tempo</span>
+            <div class="flex items-center gap-1.5 mt-1">
+              <select id="tempoMoodSelect" onchange="updateTempoMood()" class="text-xs font-bold text-harmony-800 bg-transparent border-0 focus:ring-0 p-0 cursor-pointer">
+                <option value="Andante">Andante (Walking Pace 🚶‍♀️)</option>
+                <option value="Moderato" selected>Moderato (Balanced ⚖️)</option>
+                <option value="Allegro">Allegro (Brisk & Lively ⚡)</option>
+                <option value="Largo">Largo (Gentle & Slow 🌿)</option>
+                <option value="Vivace">Vivace (Vibrant Energy 🌟)</option>
+              </select>
+            </div>
+          </div>
+          <div class="bg-white/80 rounded-xl p-3 border border-harmony-200">
+            <span class="text-[11px] font-semibold text-harmony-600 block">Daily Progress</span>
+            <div class="w-full bg-harmony-100 rounded-full h-2 mt-2.5 overflow-hidden">
+              <div id="taskProgressBar" class="bg-gradient-to-r from-coral-500 to-sage-500 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+            <div class="text-[10px] text-right text-harmony-500 mt-1 font-mono" id="taskProgressPercent">0% Done</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Logger Layout: 2 Columns -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Left Column: Unified Task Logger & Schedule (7 cols) -->
+        <div class="lg:col-span-7 space-y-5">
+
+          <!-- Task Logger Card -->
+          <div class="bg-white rounded-3xl p-5 sm:p-6 border border-harmony-200 shadow-sm space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-harmony-100">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-xl bg-coral-100 text-coral-600 flex items-center justify-center font-bold">
+                  <i data-lucide="check-square" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <h3 class="font-bold text-harmony-900 text-base">Daily Task Logger</h3>
+                  <p class="text-xs text-harmony-500">Track MOE Music prep, lessons, and your 2 kids' schedules</p>
+                </div>
+              </div>
+
+              <!-- Filter Pills -->
+              <div class="flex items-center gap-1 bg-harmony-100 p-1 rounded-xl text-xs font-semibold">
+                <button onclick="setTaskFilter('all')" id="filter-all" class="task-filter-btn px-2.5 py-1 rounded-lg bg-white text-harmony-900 shadow-xs">All</button>
+                <button onclick="setTaskFilter('school')" id="filter-school" class="task-filter-btn px-2.5 py-1 rounded-lg text-harmony-600 hover:text-harmony-900">🏫 MOE Music</button>
+                <button onclick="setTaskFilter('home')" id="filter-home" class="task-filter-btn px-2.5 py-1 rounded-lg text-harmony-600 hover:text-harmony-900">🏡 2 Kids</button>
+                <button onclick="setTaskFilter('self')" id="filter-self" class="task-filter-btn px-2.5 py-1 rounded-lg text-harmony-600 hover:text-harmony-900">✨ Me-Time</button>
+              </div>
+            </div>
+
+            <!-- Add Task Input Form -->
+            <form onsubmit="handleAddTask(event)" class="space-y-3 bg-[#faf7f5] p-3.5 rounded-2xl border border-harmony-200/80">
+              <div class="flex items-center gap-2">
+                <input type="text" id="newTaskTitle" required placeholder="What needs attention today? (e.g. Set up P3 recorder sheet / Sign Kid 1 spelling book)" 
+                  class="flex-1 bg-white border border-harmony-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-coral-500/20 focus:border-coral-500 placeholder-harmony-400">
+                <button type="submit" class="bg-coral-500 hover:bg-coral-600 text-white px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-1.5 transition shadow-sm shrink-0">
+                  <i data-lucide="plus" class="w-4 h-4"></i> Add
+                </button>
+              </div>
+              
+              <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+                <div class="flex flex-wrap items-center gap-2">
+                  <!-- Category Select -->
+                  <select id="newTaskCategory" class="bg-white border border-harmony-200 rounded-lg px-2.5 py-1 text-xs text-harmony-700 font-medium focus:outline-none">
+                    <option value="school">🏫 MOE Music Class</option>
+                    <option value="home">🏡 2 Kids & Home</option>
+                    <option value="self">✨ Teacher-Mom Me-Time</option>
+                  </select>
+
+                  <!-- Time Block / Period -->
+                  <select id="newTaskSlot" class="bg-white border border-harmony-200 rounded-lg px-2.5 py-1 text-xs text-harmony-700 font-medium focus:outline-none">
+                    <option value="morning">🌅 Morning Rush (6:30 - 7:30 AM)</option>
+                    <option value="school-am">🎵 Periods 1-4 (Morning Teaching)</option>
+                    <option value="school-pm">🎹 Periods 5-8 (Afternoon / Recess)</option>
+                    <option value="cca-prep">📋 1:30 - 4:00 PM (Prep / CCA)</option>
+                    <option value="kid-transit">🎒 5:00 - 7:00 PM (Kid Pickup & Dinner)</option>
+                    <option value="night">🌙 8:00 - 9:30 PM (Homework & Bedtime)</option>
+                  </select>
+
+                  <!-- Priority Tag -->
+                  <select id="newTaskPriority" class="bg-white border border-harmony-200 rounded-lg px-2.5 py-1 text-xs text-harmony-700 font-medium focus:outline-none">
+                    <option value="urgent">🔴 Urgent Deadline</option>
+                    <option value="normal" selected>🟡 Normal Flow</option>
+                    <option value="low">🟢 Nice-to-have</option>
+                  </select>
+                </div>
+
+                <!-- Quick Preset Prompts -->
+                <div class="flex items-center gap-1">
+                  <span class="text-[11px] text-harmony-500">Quick:</span>
+                  <button type="button" onclick="fillTaskPreset('Prep P4 Recorder fingering cards', 'school', 'school-am', 'urgent')" class="text-[11px] bg-white border border-harmony-200 px-2 py-0.5 rounded text-harmony-700 hover:bg-harmony-50">Recorder</button>
+                  <button type="button" onclick="fillTaskPreset('Check Kid 1 & Kid 2 spelling/Ting Xie', 'home', 'night', 'urgent')" class="text-[11px] bg-white border border-harmony-200 px-2 py-0.5 rounded text-harmony-700 hover:bg-harmony-50">Spelling</button>
+                  <button type="button" onclick="fillTaskPreset('Tune 10 Ukuleles in Music Room 2', 'school', 'cca-prep', 'normal')" class="text-[11px] bg-white border border-harmony-200 px-2 py-0.5 rounded text-harmony-700 hover:bg-harmony-50">Ukulele</button>
+                </div>
+              </div>
+            </form>
+
+            <!-- Tasks List Container -->
+            <div id="taskList" class="space-y-2.5 max-h-[460px] overflow-y-auto pr-1">
+              <!-- Dynamically populated via JS -->
+            </div>
+            
+            <div class="flex items-center justify-between pt-2 text-xs text-harmony-500 border-t border-harmony-100">
+              <span id="taskCountSummary">Showing all tasks</span>
+              <button onclick="clearCompletedTasks()" class="hover:text-coral-600 transition">Clear completed</button>
+            </div>
+          </div>
+
+          <!-- Time-Blocked Day Timeline Overview -->
+          <div class="bg-white rounded-3xl p-5 sm:p-6 border border-harmony-200 shadow-sm space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-harmony-900 text-sm flex items-center gap-2">
+                <i data-lucide="clock" class="w-4 h-4 text-coral-500"></i> Adeline's Daily Rhythm Schedule
+              </h3>
+              <span class="text-xs text-harmony-500">Balanced flow for school & kids</span>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <div class="p-3 bg-coral-50/50 rounded-xl border border-coral-200/50">
+                <span class="font-bold text-coral-800 block mb-1">🌅 06:30 - 07:30 • Morning Launch</span>
+                <p class="text-harmony-700">Kid breakfast, water bottles, pack school bags, calm departure.</p>
+              </div>
+              <div class="p-3 bg-amber-50/50 rounded-xl border border-amber-200/50">
+                <span class="font-bold text-amber-800 block mb-1">🎵 07:45 - 13:30 • MOE Classroom Magic</span>
+                <p class="text-harmony-700">P1-P6 lessons, active singing, recorder/ukulele practicals, recess duty.</p>
+              </div>
+              <div class="p-3 bg-sage-50/50 rounded-xl border border-sage-200/50">
+                <span class="font-bold text-sage-800 block mb-1">📋 13:30 - 16:30 • Department & CCA</span>
+                <p class="text-harmony-700">Choir/Band CCA, mark reflection sheets, prep instruments for tomorrow.</p>
+              </div>
+              <div class="p-3 bg-purple-50/50 rounded-xl border border-purple-200/50">
+                <span class="font-bold text-purple-800 block mb-1">🌙 17:30 - 21:00 • Family & Bedtime</span>
+                <p class="text-harmony-700">Kid homework check, warm dinner, 15-min music play, lullaby wind-down.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Today's Teaching Spark + Kids Quick Matter + Gratitude (5 cols) -->
+        <div class="lg:col-span-5 space-y-5">
+
+          <!-- Featured Daily Music Inspiration Widget -->
+          <div class="bg-gradient-to-br from-[#fff7ed] via-white to-[#fef2f2] rounded-3xl p-5 sm:p-6 border border-amber-200/70 shadow-sm relative space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="p-2 rounded-xl bg-amber-100 text-amber-700">
+                  <i data-lucide="flame" class="w-4 h-4"></i>
+                </span>
+                <div>
+                  <h3 class="font-bold text-harmony-900 text-sm">Today's MOE Teaching Spark</h3>
+                  <span id="sparkLevelTag" class="text-[11px] font-semibold text-amber-700 uppercase">Primary 3-4 Focus</span>
+                </div>
+              </div>
+              <button onclick="generateRandomSpark()" class="p-2 text-amber-700 hover:bg-amber-100 rounded-xl transition flex items-center gap-1 text-xs font-semibold" title="Roll New Spark">
+                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Spin
+              </button>
+            </div>
+
+            <!-- Spark Content Body -->
+            <div id="dailySparkCard" class="bg-white/90 rounded-2xl p-4 border border-amber-200/50 space-y-2.5">
+              <div class="flex items-center justify-between">
+                <h4 id="sparkTitle" class="font-bold text-harmony-900 text-sm">The "Beat Detective" Rhythm Hunt</h4>
+                <span id="sparkDomain" class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-full">Listening & Rhythms</span>
+              </div>
+              <p id="sparkDescription" class="text-xs text-harmony-700 leading-relaxed">
+                One student plays the "Detective" outside. Class chooses a secret rhythmic leader who silently changes body percussion (clap, snap, chest pat, stomp). Detective returns and has 3 guesses to spot the leader!
+              </p>
+              <div class="pt-2 border-t border-harmony-100 flex items-center justify-between text-[11px]">
+                <span class="text-harmony-500 flex items-center gap-1">
+                  <i data-lucide="timer" class="w-3 h-3"></i> <span id="sparkDuration">7-10 mins (Warmup)</span>
+                </span>
+                <button onclick="addSparkToTodayPlan()" class="text-coral-600 font-semibold hover:underline flex items-center gap-1">
+                  <i data-lucide="bookmark-plus" class="w-3.5 h-3.5"></i> Save to Lesson Plan
+                </button>
+              </div>
+            </div>
+
+            <!-- Direct link to full syllabus -->
+            <div class="text-center">
+              <button onclick="switchTab('music-sparks')" class="text-xs font-semibold text-amber-800 hover:text-amber-950 underline flex items-center justify-center gap-1 mx-auto">
+                Explore 50+ MOE Teaching Activities by Grade Level &rarr;
+              </button>
+            </div>
+          </div>
+
+          <!-- 2 Kids Matters Spotlight Card -->
+          <div class="bg-white rounded-3xl p-5 sm:p-6 border border-harmony-200 shadow-sm space-y-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="p-2 rounded-xl bg-sage-100 text-sage-700">
+                  <i data-lucide="heart" class="w-4 h-4"></i>
+                </span>
+                <div>
+                  <h3 class="font-bold text-harmony-900 text-sm">Mom of 2 Daily Snapshot</h3>
+                  <p class="text-xs text-harmony-500">School & wellbeing checklist for both kids</p>
+                </div>
+              </div>
+              <button onclick="switchTab('two-kids')" class="text-xs font-semibold text-sage-700 hover:underline">
+                View Full
+              </button>
+            </div>
+
+            <!-- Mini Kid Tabs -->
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div class="bg-sage-50/70 p-3 rounded-2xl border border-sage-200/60 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-sage-900" id="kid1NameDisplay">Child 1 (Primary)</span>
+                  <span class="text-[10px] bg-sage-200 text-sage-800 px-1.5 py-0.5 rounded font-mono">P3</span>
+                </div>
+                <div class="space-y-1.5">
+                  <label class="flex items-center gap-2 text-[11px] text-harmony-700 cursor-pointer">
+                    <input type="checkbox" onchange="toggleKidItem('k1_homework')" id="k1_homework" class="rounded text-sage-600 focus:ring-0 w-3.5 h-3.5">
+                    <span>Homework / Ting Xie check</span>
+                  </label>
+                  <label class="flex items-center gap-2 text-[11px] text-harmony-700 cursor-pointer">
+                    <input type="checkbox" onchange="toggleKidItem('k1_bag')" id="k1_bag" class="rounded text-sage-600 focus:ring-0 w-3.5 h-3.5">
+                    <span>Pack bag & art/music items</span>
+                  </label>
+                  <label class="flex items-center gap-2 text-[11px] text-harmony-700 cursor-pointer">
+                    <input type="checkbox" onchange="toggleKidItem('k1_read')" id="k1_read" class="rounded text-sage-600 focus:ring-0 w-3.5 h-3.5">
+                    <span>20-min reading before sleep</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="bg-coral-50/70 p-3 rounded-2xl border border-coral-200/60 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-coral-900" id="kid2NameDisplay">Child 2 (Junior)</span>
+                  <span class="text-[10px] bg-coral-200 text-coral-800 px-1.5 py-0.5 rounded font-mono">P1</span>
+                </div>
+                <div class="space-y-1.5">
+                  <label class="flex items-center gap-2 text-[11px] text-harmony-700 cursor-pointer">
+                    <input type="checkbox" onchange="toggleKidItem('k2_water')" id="k2_water" class="rounded text-coral-600 focus:ring-0 w-3.5 h-3.5">
+                    <span>Refill school water bottle</span>
+                  </label>
+                  <label class="flex items-center gap-2 text-[11px] text-harmony-700 cursor-pointer">
+                    <input type="checkbox" onchange="toggleKidItem('k2_spelling')" id="k2_spelling" class="rounded text-coral-600 focus:ring-0 w-3.5 h-3.5">
+                    <span>English spelling word drill</span>
+                  </label>
+                  <label class="flex items-center gap-2 text-[11px] text-harmony-700 cursor-pointer">
+                    <input type="checkbox" onchange="toggleKidItem('k2_hug')" id="k2_hug" class="rounded text-coral-600 focus:ring-0 w-3.5 h-3.5">
+                    <span>10-min bedtime cuddle & chat</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Today's Home Play Idea -->
+            <div class="p-3 bg-harmony-50 rounded-xl border border-harmony-200/60 flex items-start gap-2.5">
+              <span class="text-lg">🧸</span>
+              <div>
+                <span class="text-[11px] font-bold text-harmony-800 block">Tonight's 10-Min Connection Spark:</span>
+                <p class="text-xs text-harmony-600" id="homeSparkText">
+                  "Musical Freeze Dining": Put on some lively Grieg or Mozart during dinner cleanup; freeze in dramatic poses whenever mum hits pause!
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Teacher-Mom Reflection & Gratitude Log -->
+          <div class="bg-white rounded-3xl p-5 sm:p-6 border border-harmony-200 shadow-sm space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-harmony-900 text-sm flex items-center gap-2">
+                <i data-lucide="feather" class="w-4 h-4 text-coral-500"></i> Teacher-Mom Mindful Reflection
+              </h3>
+              <span class="text-[11px] text-harmony-400">Autosaved</span>
+            </div>
+            
+            <div class="space-y-2">
+              <div>
+                <label class="text-[11px] font-semibold text-harmony-600 block mb-1">One Small Win in School or at Home Today:</label>
+                <input type="text" id="dailyWinInput" onchange="saveReflection()" placeholder="e.g. P2 class finally mastered Sol-Mi, or kids ate all their veggies!" 
+                  class="w-full bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-coral-500 focus:border-coral-500">
+              </div>
+              <div>
+                <label class="text-[11px] font-semibold text-harmony-600 block mb-1">Kid Quote or Funny Classroom Moment:</label>
+                <input type="text" id="dailyFunnyInput" onchange="saveReflection()" placeholder="e.g. Student called the triangle instrument a 'pizza slice'!" 
+                  class="w-full bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-coral-500 focus:border-coral-500">
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: SINGAPORE MOE MUSIC SYLLABUS MATRIX -->
+    <!-- ========================================== -->
+    <div id="tab-moe-curriculum" class="tab-content hidden space-y-6">
+      
+      <!-- Syllabus Header & Overview -->
+      <div class="bg-white rounded-3xl p-6 sm:p-7 border border-harmony-200 shadow-sm">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-harmony-100">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="bg-coral-100 text-coral-700 text-xs font-bold px-2.5 py-0.5 rounded-full">Primary 1 to Primary 6</span>
+              <span class="text-xs text-harmony-500">Singapore Ministry of Education (MOE) Framework</span>
+            </div>
+            <h2 class="text-2xl font-serif font-bold text-harmony-900 mt-1">Primary Music Curriculum Matrix</h2>
+            <p class="text-sm text-harmony-600 max-w-3xl mt-1">
+              Aligned with MOE 3 Core Learning Dimensions: <strong>1. Perform</strong> (Singing & Instruments), <strong>2. Create</strong> (Improvising & Arranging), and <strong>3. Listen & Respond</strong> (Aesthetic appreciation & Cultural heritage).
+            </p>
+          </div>
+          <button onclick="openLessonPlanModal()" class="bg-coral-500 hover:bg-coral-600 text-white font-semibold text-xs sm:text-sm px-4 py-2.5 rounded-xl flex items-center gap-2 shadow-sm transition shrink-0">
+            <i data-lucide="file-text" class="w-4 h-4"></i> Draft New Lesson Plan
+          </button>
+        </div>
+
+        <!-- Grade Selector Pills -->
+        <div class="flex flex-wrap gap-2 pt-5">
+          <button onclick="showGradeSyllabus('p1')" id="grade-btn-p1" class="grade-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-coral-500 text-white shadow-xs">Primary 1</button>
+          <button onclick="showGradeSyllabus('p2')" id="grade-btn-p2" class="grade-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-harmony-100 text-harmony-700 hover:bg-harmony-200">Primary 2</button>
+          <button onclick="showGradeSyllabus('p3')" id="grade-btn-p3" class="grade-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-harmony-100 text-harmony-700 hover:bg-harmony-200">Primary 3</button>
+          <button onclick="showGradeSyllabus('p4')" id="grade-btn-p4" class="grade-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-harmony-100 text-harmony-700 hover:bg-harmony-200">Primary 4</button>
+          <button onclick="showGradeSyllabus('p5')" id="grade-btn-p5" class="grade-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-harmony-100 text-harmony-700 hover:bg-harmony-200">Primary 5</button>
+          <button onclick="showGradeSyllabus('p6')" id="grade-btn-p6" class="grade-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-harmony-100 text-harmony-700 hover:bg-harmony-200">Primary 6</button>
+        </div>
+      </div>
+
+      <!-- Dynamic Grade Content Display -->
+      <div id="gradeSyllabusDisplay" class="space-y-6">
+        <!-- Injected via JavaScript based on chosen grade -->
+      </div>
+
+      <!-- Saved Lesson Plans Gallery -->
+      <div class="bg-white rounded-3xl p-6 border border-harmony-200 shadow-sm space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-xl bg-sage-100 text-sage-700 flex items-center justify-center font-bold">
+              <i data-lucide="archive" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-harmony-900 text-base">Adeline's Saved Lesson Plans</h3>
+              <p class="text-xs text-harmony-500">Ready-to-teach outlines saved on this device</p>
+            </div>
+          </div>
+          <span id="savedPlansCount" class="text-xs font-semibold text-harmony-500 font-mono">0 Plans</span>
+        </div>
+
+        <div id="savedPlansList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Dynamically populated or empty placeholder -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 3: TEACHING INSPIRATION SPARKS & GAMES -->
+    <!-- ========================================== -->
+    <div id="tab-music-sparks" class="tab-content hidden space-y-6">
+      
+      <!-- Sparks Control Bar -->
+      <div class="bg-white rounded-3xl p-6 border border-harmony-200 shadow-sm space-y-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-2xl font-serif font-bold text-harmony-900">Music Education Idea Generator</h2>
+            <p class="text-sm text-harmony-600">Fresh games, Dalcroze movement, Kodály Solfège drills, and Singapore multicultural music ideas</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="filterSparks('all')" class="spark-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-coral-500 text-white">All Ideas</button>
+            <button onclick="filterSparks('warmup')" class="spark-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-harmony-100 text-harmony-700 hover:bg-harmony-200">5-Min Warmups</button>
+            <button onclick="filterSparks('movement')" class="spark-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-harmony-100 text-harmony-700 hover:bg-harmony-200">Dalcroze & Movement</button>
+            <button onclick="filterSparks('singing')" class="spark-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-harmony-100 text-harmony-700 hover:bg-harmony-200">Vocal & Solfège</button>
+            <button onclick="filterSparks('instruments')" class="spark-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-harmony-100 text-harmony-700 hover:bg-harmony-200">Recorder & Ukulele</button>
+            <button onclick="filterSparks('heritage')" class="spark-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-harmony-100 text-harmony-700 hover:bg-harmony-200">Singapore Heritage</button>
+          </div>
+        </div>
+
+        <div class="relative">
+          <input type="text" id="sparkSearchInput" oninput="searchSparks()" placeholder="Search activities by keyword (e.g. rhythm, angklung, canon, pitch, game, ostinato)..." 
+            class="w-full bg-[#faf7f5] border border-harmony-200 rounded-2xl px-4 py-2.5 text-sm pl-10 focus:ring-2 focus:ring-coral-500/20 focus:border-coral-500">
+          <i data-lucide="search" class="w-4 h-4 text-harmony-400 absolute left-3.5 top-3.5"></i>
+        </div>
+      </div>
+
+      <!-- Sparks Grid -->
+      <div id="sparksGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Rendered via JS -->
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 4: MY 2 KIDS MATTERS (MOM OF 2 HUB)    -->
+    <!-- ========================================== -->
+    <div id="tab-two-kids" class="tab-content hidden space-y-6">
+      
+      <!-- Kids Header & Profile Customizer -->
+      <div class="bg-gradient-to-r from-coral-50 via-white to-sage-50 rounded-3xl p-6 sm:p-7 border border-harmony-200 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="bg-sage-100 text-sage-800 text-xs font-bold px-2.5 py-0.5 rounded-full">Mother of 2 Sanctuary</span>
+              <span class="text-xs text-harmony-500">Nurturing with Music, Love & Structure</span>
+            </div>
+            <h2 class="text-2xl font-serif font-bold text-harmony-900 mt-1">Kids' Routines, Learning & Sparks</h2>
+            <p class="text-sm text-harmony-600">Keep both children's spelling lists, school schedules, health memos, and joyful bonding sparks in one calm place.</p>
+          </div>
+          <button onclick="openKidSettingsModal()" class="px-3.5 py-2 bg-white border border-harmony-300 rounded-xl text-xs font-bold text-harmony-800 hover:bg-harmony-100 flex items-center gap-1.5 shadow-xs transition shrink-0">
+            <i data-lucide="settings" class="w-4 h-4 text-coral-500"></i> Customize Kid Profiles
+          </button>
+        </div>
+      </div>
+
+      <!-- Two Children Side-by-Side Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- Child 1 Card -->
+        <div class="bg-white rounded-3xl p-6 border border-sage-200/80 shadow-sm space-y-5">
+          <div class="flex items-center justify-between pb-3 border-b border-sage-100">
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-11 rounded-2xl bg-sage-100 text-sage-700 flex items-center justify-center font-bold text-lg">
+                🧒
+              </div>
+              <div>
+                <h3 class="font-bold text-harmony-900 text-base flex items-center gap-1.5" id="profileKid1Name">Child 1 (Older)</h3>
+                <span class="text-xs text-sage-700 font-medium" id="profileKid1Grade">Primary School • Age 9</span>
+              </div>
+            </div>
+            <span class="px-2.5 py-1 bg-sage-50 text-sage-800 rounded-full text-xs font-bold border border-sage-200">Track 1</span>
+          </div>
+
+          <!-- Daily Habits Checklist -->
+          <div class="space-y-3">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-harmony-600 flex items-center gap-1.5">
+              <i data-lucide="list-checks" class="w-3.5 h-3.5 text-sage-600"></i> Daily School & Routine Checklist
+            </h4>
+            <div class="space-y-2 text-xs" id="kid1CustomChecklist">
+              <!-- Rendered via JS -->
+            </div>
+            
+            <form onsubmit="addKidItem(event, 1)" class="flex gap-2 pt-2">
+              <input type="text" id="newKid1Task" placeholder="Add specific task (e.g. Science worksheet p.24)..." 
+                class="flex-1 bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-1.5 text-xs focus:ring-1 focus:ring-sage-500 focus:outline-none">
+              <button type="submit" class="bg-sage-600 hover:bg-sage-700 text-white px-3 py-1.5 rounded-xl text-xs font-semibold">Add</button>
+            </form>
+          </div>
+
+          <!-- Memos & Notes for Child 1 -->
+          <div class="space-y-2 pt-3 border-t border-harmony-100">
+            <label class="text-xs font-bold text-harmony-700 flex items-center justify-between">
+              <span>Important Notes & Memos</span>
+              <span class="text-[10px] text-harmony-400">Autosaves</span>
+            </label>
+            <textarea id="kid1Notes" onchange="saveKidNotes(1)" rows="3" placeholder="e.g. Spelling test every Thursday; Piano lesson Saturday 10am; Swimming gear on Wednesday." 
+              class="w-full bg-[#faf7f5] border border-harmony-200 rounded-xl p-3 text-xs focus:ring-1 focus:ring-sage-500 focus:outline-none"></textarea>
+          </div>
+        </div>
+
+        <!-- Child 2 Card -->
+        <div class="bg-white rounded-3xl p-6 border border-coral-200/80 shadow-sm space-y-5">
+          <div class="flex items-center justify-between pb-3 border-b border-coral-100">
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-11 rounded-2xl bg-coral-100 text-coral-700 flex items-center justify-center font-bold text-lg">
+                👧
+              </div>
+              <div>
+                <h3 class="font-bold text-harmony-900 text-base flex items-center gap-1.5" id="profileKid2Name">Child 2 (Younger)</h3>
+                <span class="text-xs text-coral-700 font-medium" id="profileKid2Grade">Primary School • Age 7</span>
+              </div>
+            </div>
+            <span class="px-2.5 py-1 bg-coral-50 text-coral-800 rounded-full text-xs font-bold border border-coral-200">Track 2</span>
+          </div>
+
+          <!-- Daily Habits Checklist -->
+          <div class="space-y-3">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-harmony-600 flex items-center gap-1.5">
+              <i data-lucide="list-checks" class="w-3.5 h-3.5 text-coral-600"></i> Daily School & Routine Checklist
+            </h4>
+            <div class="space-y-2 text-xs" id="kid2CustomChecklist">
+              <!-- Rendered via JS -->
+            </div>
+            
+            <form onsubmit="addKidItem(event, 2)" class="flex gap-2 pt-2">
+              <input type="text" id="newKid2Task" placeholder="Add specific task (e.g. Color phonics book p.8)..." 
+                class="flex-1 bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-1.5 text-xs focus:ring-1 focus:ring-coral-500 focus:outline-none">
+              <button type="submit" class="bg-coral-500 hover:bg-coral-600 text-white px-3 py-1.5 rounded-xl text-xs font-semibold">Add</button>
+            </form>
+          </div>
+
+          <!-- Memos & Notes for Child 2 -->
+          <div class="space-y-2 pt-3 border-t border-harmony-100">
+            <label class="text-xs font-bold text-harmony-700 flex items-center justify-between">
+              <span>Important Notes & Memos</span>
+              <span class="text-[10px] text-harmony-400">Autosaves</span>
+            </label>
+            <textarea id="kid2Notes" onchange="saveKidNotes(2)" rows="3" placeholder="e.g. Ting Xie every Tuesday; Needs new water bottle lid; Bring craft scissors for Art on Friday." 
+              class="w-full bg-[#faf7f5] border border-harmony-200 rounded-xl p-3 text-xs focus:ring-1 focus:ring-coral-500 focus:outline-none"></textarea>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Fun Mother-Kid Musical & Bonding Ideas Library -->
+      <div class="bg-white rounded-3xl p-6 border border-harmony-200 shadow-sm space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="font-bold text-harmony-900 text-lg flex items-center gap-2">
+              <i data-lucide="sparkles" class="w-5 h-5 text-amber-500"></i> Musical Motherhood Sparks (Home Edition)
+            </h3>
+            <p class="text-xs text-harmony-600">Quick 10-minute games to connect with your kids without screen exhaustion</p>
+          </div>
+          <button onclick="renderNewHomeSparks()" class="text-xs font-semibold text-coral-600 hover:text-coral-700 flex items-center gap-1">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Shuffle Ideas
+          </button>
+        </div>
+
+        <div id="homeSparksGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer with Backup, Export and Encouragement -->
+  <footer class="bg-white border-t border-harmony-200 py-6 px-4 sm:px-6 lg:px-8 mt-12 no-print text-xs text-harmony-600">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="w-6 h-6 rounded-lg bg-coral-100 text-coral-600 flex items-center justify-center font-bold text-xs">♪</span>
+        <span>Crafted with admiration for <strong>Adeline</strong> • Music Educator & Loving Mother</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <button onclick="exportData()" class="hover:text-harmony-900 flex items-center gap-1 transition">
+          <i data-lucide="download" class="w-3.5 h-3.5"></i> Backup Data (JSON)
+        </button>
+        <label class="hover:text-harmony-900 flex items-center gap-1 cursor-pointer transition">
+          <i data-lucide="upload" class="w-3.5 h-3.5"></i> Restore
+          <input type="file" id="importFileInput" onchange="importData(event)" class="hidden" accept=".json">
+        </label>
+        <button onclick="resetToSampleData()" class="text-red-500 hover:text-red-700 transition">Reset Demo</button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================== -->
+  <!-- MODAL: DRAFT LESSON PLAN                   -->
+  <!-- ========================================== -->
+  <div id="lessonPlanModal" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-7 shadow-2xl space-y-5 border border-harmony-200">
+      <div class="flex items-center justify-between pb-3 border-b border-harmony-100">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-xl bg-coral-100 text-coral-600 flex items-center justify-center font-bold">
+            <i data-lucide="music" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-harmony-900 text-lg">MOE Music Lesson Plan Builder</h3>
+            <p class="text-xs text-harmony-500">Structured for 30m / 60m Singapore Primary Music classes</p>
+          </div>
+        </div>
+        <button onclick="closeLessonPlanModal()" class="text-harmony-400 hover:text-harmony-700 p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form onsubmit="handleSaveLessonPlan(event)" class="space-y-4 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="font-semibold text-harmony-700 block mb-1">Grade Level</label>
+            <select id="lpGrade" class="w-full bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-coral-500">
+              <option value="Primary 1">Primary 1 (Foundational Beat & Sol-Mi)</option>
+              <option value="Primary 2">Primary 2 (Solfège Sol-Mi-La & Ostinato)</option>
+              <option value="Primary 3" selected>Primary 3 (Recorder B-A-G & Kompang)</option>
+              <option value="Primary 4">Primary 4 (Recorder Low C-D-E & Angklung)</option>
+              <option value="Primary 5">Primary 5 (Ukulele Chords & Digital Music)</option>
+              <option value="Primary 6">Primary 6 (Ensemble & Southeast Asian Traditions)</option>
+            </select>
+          </div>
+          <div>
+            <label class="font-semibold text-harmony-700 block mb-1">Duration</label>
+            <select id="lpDuration" class="w-full bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-coral-500">
+              <option value="1 Period (30 mins)">1 Period (30 mins)</option>
+              <option value="2 Periods (60 mins)" selected>2 Periods (60 mins)</option>
+            </select>
+          </div>
+          <div>
+            <label class="font-semibold text-harmony-700 block mb-1">Term & Week</label>
+            <input type="text" id="lpTermWeek" placeholder="e.g. Term 2 Week 4" value="Term 2 Week 3" class="w-full bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-coral-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="font-semibold text-harmony-700 block mb-1">Lesson Topic / Focus Song</label>
+          <input type="text" id="lpTopic" required placeholder="e.g. Di Tanjong Katong – Kompang Beat Patterns & Staccato Recorder" class="w-full bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-coral-500">
+        </div>
+
+        <div>
+          <label class="font-semibold text-harmony-700 block mb-1">Learning Outcomes (Perform / Create / Listen)</label>
+          <textarea id="lpOutcomes" rows="2" placeholder="e.g. By end of lesson, pupils will: 1. Sing melody accurately in tune; 2. Play steady beat pattern on Kompang; 3. Identify binary (AB) form." class="w-full bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-coral-500"></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="sm:col-span-1">
+            <label class="font-semibold text-harmony-700 block mb-1">1. Warm-Up (5-8 mins)</label>
+            <textarea id="lpWarmup" rows="3" placeholder="Vocal sirens, echo clapping, rhythm card flashcards..." class="w-full bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-coral-500"></textarea>
+          </div>
+          <div class="sm:col-span-2">
+            <label class="font-semibold text-harmony-700 block mb-1">2. Core Development & Active Music Making (30-40 mins)</label>
+            <textarea id="lpCore" rows="3" placeholder="Section-by-section singing, instrumental hand-off, group polyrhythmic layering..." class="w-full bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-coral-500"></textarea>
+          </div>
+        </div>
+
+        <div>
+          <label class="font-semibold text-harmony-700 block mb-1">3. Closure & Reflection / Exit Ticket (5-10 mins)</label>
+          <input type="text" id="lpClosure" placeholder="Show thumbs up/sideways for confidence, class unison showcase performance..." class="w-full bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-coral-500">
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-harmony-100">
+          <button type="button" onclick="closeLessonPlanModal()" class="px-4 py-2 rounded-xl text-harmony-700 hover:bg-harmony-100 font-semibold">Cancel</button>
+          <button type="submit" class="bg-coral-500 hover:bg-coral-600 text-white font-semibold px-5 py-2 rounded-xl shadow-sm transition">Save to My Lesson Archives</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: KID PROFILE SETTINGS                -->
+  <!-- ========================================== -->
+  <div id="kidSettingsModal" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-harmony-200">
+      <div class="flex items-center justify-between pb-2 border-b border-harmony-100">
+        <h3 class="font-bold text-harmony-900 text-base">Customize Your 2 Kids' Profiles</h3>
+        <button onclick="closeKidSettingsModal()" class="text-harmony-400 hover:text-harmony-700">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form onsubmit="handleSaveKidSettings(event)" class="space-y-4 text-xs">
+        <div class="space-y-3 p-3 bg-sage-50/50 rounded-2xl border border-sage-200/50">
+          <h4 class="font-bold text-sage-900">Child 1 (First Born)</h4>
+          <div>
+            <label class="font-semibold text-harmony-700 block mb-1">Name / Nickname</label>
+            <input type="text" id="modalKid1Name" required class="w-full bg-white border border-harmony-200 rounded-xl px-3 py-2 text-xs">
+          </div>
+          <div>
+            <label class="font-semibold text-harmony-700 block mb-1">Grade / Level & Age</label>
+            <input type="text" id="modalKid1Grade" placeholder="e.g. Primary 3 • 9 yo" class="w-full bg-white border border-harmony-200 rounded-xl px-3 py-2 text-xs">
+          </div>
+        </div>
+
+        <div class="space-y-3 p-3 bg-coral-50/50 rounded-2xl border border-coral-200/50">
+          <h4 class="font-bold text-coral-900">Child 2 (Second Born)</h4>
+          <div>
+            <label class="font-semibold text-harmony-700 block mb-1">Name / Nickname</label>
+            <input type="text" id="modalKid2Name" required class="w-full bg-white border border-harmony-200 rounded-xl px-3 py-2 text-xs">
+          </div>
+          <div>
+            <label class="font-semibold text-harmony-700 block mb-1">Grade / Level & Age</label>
+            <input type="text" id="modalKid2Grade" placeholder="e.g. Primary 1 • 7 yo" class="w-full bg-white border border-harmony-200 rounded-xl px-3 py-2 text-xs">
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2">
+          <button type="button" onclick="closeKidSettingsModal()" class="px-4 py-2 rounded-xl text-harmony-700 hover:bg-harmony-100 font-semibold">Cancel</button>
+          <button type="submit" class="bg-coral-500 hover:bg-coral-600 text-white font-semibold px-4 py-2 rounded-xl transition">Save Profiles</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- APPLICATION LOGIC & PRESET DATA -->
+  <script>
+    // Audio Synthesizer via Web Audio API for musical chimes
+    let audioCtx = null;
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playNote(frequency, noteName) {
+      try {
+        const ctx = getAudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle'; // pleasant bell-like chime
+        osc.frequency.setValueAtTime(frequency, ctx.currentTime);
+        
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.2);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 1.2);
+      } catch (e) {
+        console.warn("Audio playback not ready:", e);
+      }
+    }
+
+    function playChimeChord() {
+      const pentatonic = [261.63, 329.63, 392.00, 523.25]; // C, E, G, C'
+      pentatonic.forEach((freq, i) => {
+        setTimeout(() => playNote(freq), i * 140);
+      });
+    }
+
+    // Comprehensive Singapore MOE Primary Music Syllabus Database
+    const MOE_SYLLABUS = {
+      p1: {
+        grade: "Primary 1",
+        ageRange: "7 Years Old",
+        focus: "Foundational Beat, High/Low Pitch & Active Movement",
+        tagline: "Exploring soundscapes, feeling the pulse, and joyful singing.",
+        learningOutcomes: [
+          "Differentiate steady beat from silence and moving pulse.",
+          "Identify high vs low sounds and vocal pitch direction.",
+          "Perform Sol-Mi pitch patterns using Kodály hand signs.",
+          "Sing familiar local nursery and folk songs in tune with expression.",
+          "Explore body percussion (clapping, patting, stamping) to accompany songs."
+        ],
+        repertoire: [
+          "Chan Mali Chan (Singapore / Malay Folk Song)",
+          "The More We Get Together",
+          "Dayung Sampan (Introductory pulse version)",
+          "Old MacDonald (Animal timbre mimicry)",
+          "Bunyi Binatang (Animal soundscapes)"
+        ],
+        instruments: ["Body percussion (lap-pat, chest, clap)", "Egg shakers", "Triangles", "Woodblocks"],
+        termIdeas: [
+          { term: "Term 1", theme: "Beat vs Rhythm", desc: "Walking like elephants (slow beat) vs scurrying mice (fast rhythm)." },
+          { term: "Term 2", theme: "Vocal Exploration", desc: "Rollercoaster sirens, Sol-Mi echo singing with hand signs." },
+          { term: "Term 3", theme: "Classroom Percussion", desc: "Triangle 'pizza slices' and woodblock horse hooves." },
+          { term: "Term 4", theme: "Local Sound Story", desc: "A rainy day in Singapore: finger taps on tables imitating tropical storm rain." }
+        ]
+      },
+      p2: {
+        grade: "Primary 2",
+        ageRange: "8 Years Old",
+        focus: "Solfège Sol-Mi-La, Rhythmic Ostinato & Dynamics",
+        tagline: "Expanding pitch awareness, dynamics (Forte/Piano), and layered ostinati.",
+        learningOutcomes: [
+          "Recognize and sing Sol-Mi-La patterns with pitch accuracy.",
+          "Distinguish and apply dynamics: Forte (loud), Piano (soft), and Crescendo.",
+          "Maintain a 2-bar rhythmic ostinato while class sings melody.",
+          "Read basic graphic notation, crotchet (ta) and paired quavers (ti-ti).",
+          "Participate in responsive movement (Dalcroze style freeze and flow)."
+        ],
+        repertoire: [
+          "Di Tanjong Katong (Primary simplified chorus)",
+          "Carnival of the Animals (Saint-Saëns - Listening & Movement)",
+          "Lollipop Tree / Sing a Song of Sixpence",
+          "Suriram (Lullaby phrasing & soft dynamics)",
+          "Semoga Bahagia (Singapore Children's Day classic - introductory)"
+        ],
+        instruments: ["Glockenspiels / Resonator Bells (C-D-E-G-A)", "Tambourines", "Guiros", "Maracas"],
+        termIdeas: [
+          { term: "Term 1", theme: "Sol-Mi-La Mastery", desc: "Ball-bounce game: bounce on 'Sol', catch on 'Mi', raise hands on 'La'." },
+          { term: "Term 2", theme: "Dynamics Drama", desc: "Sneaking like ninjas (pianissimo) vs waking the sleeping giant (fortissimo)." },
+          { term: "Term 3", theme: "Rhythmic Ostinato", desc: "Layering clap-clap-snap while singing 'Suriram'." },
+          { term: "Term 4", theme: "Instrument Carousel", desc: "Passing resonator bells in a circular song circle." }
+        ]
+      },
+      p3: {
+        grade: "Primary 3",
+        ageRange: "9 Years Old",
+        focus: "Soprano Recorder Introduction (B-A-G) & Malay Kompang Rhythms",
+        tagline: "First wind instrument journey and traditional Malay percussion.",
+        learningOutcomes: [
+          "Demonstrate proper recorder posture, left-hand placement, and 'du' tonguing.",
+          "Accurately play notes B, A, G on the soprano recorder with sweet tone.",
+          "Learn Kompang basic rhythmic strikes: 'Pak' (rim) and 'Bung' (centre).",
+          "Read standard staff notation: Treble clef, crotchet, minim, and crotchet rest.",
+          "Sing in 2-part canon / round (e.g. Frère Jacques / White Coral Bells)."
+        ],
+        repertoire: [
+          "Hot Cross Buns & Merrily We Roll Along (Recorder BAG)",
+          "Munnaeru Vaalibaa (Tamil youth song - rhythmic clapping)",
+          "Kompang Inang & Masri basic interlocking patterns",
+          "Rasa Sayang (Verse-Chorus structural analysis)",
+          "Singapore Town (Joyful upbeat singing)"
+        ],
+        instruments: ["Descant / Soprano Recorder (German or Baroque fingering)", "Malay Kompang", "Hand drums", "Agogo bells"],
+        termIdeas: [
+          { term: "Term 1", theme: "Recorder Breath Control", desc: "The 'Warm Candle Flame' test: blow warm air without blowing the flame out." },
+          { term: "Term 2", theme: "BAG Melodies", desc: "Recorder karate belt tests: White belt (B-A), Yellow belt (BAG)." },
+          { term: "Term 3", theme: "Kompang Beats", desc: "Exploring 'Pak' and 'Bung' sound contrast with palm technique." },
+          { term: "Term 4", theme: "2-Part Vocal Round", desc: "Class divides into two echo teams for Singapore folk canon." }
+        ]
+      },
+      p4: {
+        grade: "Primary 4",
+        ageRange: "10 Years Old",
+        focus: "Recorder Range Expansion (Low C-D-E) & Angklung Ensemble",
+        tagline: "Bamboo interlocking textures, full recorder scale, and National Day pride.",
+        learningOutcomes: [
+          "Expand recorder repertoire to low notes E, D, C and high F/G with clean seals.",
+          "Play in an Angklung ensemble using the interlocking arpeggio technique (kotekan style).",
+          "Read semi-quavers (tiri-tiri) and dotted rhythms in 4/4 and 3/4 time.",
+          "Perform Singapore National Day songs with harmonic or recorder accompaniment.",
+          "Evaluate peer performances with constructive musical vocabulary (pitch, tempo, tone)."
+        ],
+        repertoire: [
+          "Home (Dick Lee - Singapore National Day classic)",
+          "Count on Me Singapore / Stand Up for Singapore",
+          "Burung Kakak Tua (Indonesian/Malay folk with Angklung)",
+          "Ode to Joy (Beethoven - full recorder arrangement)",
+          "Geylang Sipaku Geylang"
+        ],
+        instruments: ["Soprano Recorder (extended range)", "Angklung (diatonic bamboo sets)", "Chime bars", "Cabasa"],
+        termIdeas: [
+          { term: "Term 1", theme: "Low Notes Mastery", desc: "Checking recorder finger leakages with soft thumb ring inspection." },
+          { term: "Term 2", theme: "Angklung Wave", desc: "Numbered notation hand-offs: shaking bamboo tubes on conductor cue." },
+          { term: "Term 3", theme: "National Day Arrangement", desc: "Pairing recorder descant with choir vocals for 'Home'." },
+          { term: "Term 4", theme: "Peer Critique Circles", desc: "Constructive feedback sandwich: 1 glow, 1 grow, 1 glow." }
+        ]
+      },
+      p5: {
+        grade: "Primary 5",
+        ageRange: "11 Years Old",
+        focus: "Ukulele Chords (C, Am, F, G) & Digital Music Loop Creation",
+        tagline: "Strumming harmony chords, garageband/soundtrap sequencing, and song forms.",
+        learningOutcomes: [
+          "Fret and transition smoothly between chords C, A minor, F, and G on the ukulele.",
+          "Execute basic 4-beat strumming patterns (Down-Down-Up-Down-Up).",
+          "Compose a 16-bar digital rhythm loop using DAW software (e.g. GarageBand / Soundtrap).",
+          "Analyze pop and folk song structures: Intro, Verse, Chorus, Bridge, Outro.",
+          "Collaborate in a small chamber ensemble combining ukulele, recorder, and cajón."
+        ],
+        repertoire: [
+          "Stand By Me (C - Am - F - G chord progression)",
+          "Riptide / Somewhere Over the Rainbow",
+          "Singapore National Day Medley (Ukulele strum & sing)",
+          "Chinese Festive Drums / Festive beats (Lion dance drum pattern study)",
+          "Pop song arrangement of pupils' choice"
+        ],
+        instruments: ["Soprano / Concert Ukuleles", "iPad / Chromebook DAWs (BandLab, Soundtrap, GarageBand)", "Cajón", "Bass xylophones"],
+        termIdeas: [
+          { term: "Term 1", theme: "The 4 Magic Chords", desc: "Chord muscle memory timer: count how many C-to-Am switches in 30 seconds." },
+          { term: "Term 2", theme: "Strumming Metronome", desc: "Calypso strum challenge with muted strings." },
+          { term: "Term 3", theme: "Digital Beat Lab", desc: "Creating a drum loop + bassline for a Singapore tourism clip." },
+          { term: "Term 4", theme: "Band Jam", desc: "Pupils lead their own 4-person busking showcase in the music room." }
+        ]
+      },
+      p6: {
+        grade: "Primary 6",
+        ageRange: "12 Years Old",
+        focus: "Southeast Asian Traditions (Gamelan/Kulintang) & Capstone Ensemble",
+        tagline: "Appreciating regional ethnic heritage, polyrhythms, and musical reflection.",
+        learningOutcomes: [
+          "Understand and perform Gamelan core concepts: Gong cycle, Balungan (melody), and Panerusan (elaborating parts).",
+          "Explore pentatonic scales (Slendro & Pelog) on metallophones/glockenspiels.",
+          "Synthesize 6 years of musical skills into a graduation class performance.",
+          "Demonstrate attentive concert etiquette as both performer and appreciative audience.",
+          "Articulate emotional connections to music through written and verbal reflections."
+        ],
+        repertoire: [
+          "Lancang Kuning / Traditional Gamelan Lancaran patterns",
+          "Kulintang gong chimes (Southern Philippines / Sabah motifs)",
+          "We Will Get There / Reach Out for the Skies",
+          "Graduation Song (Arranged by students with uke, percussion, recorder)",
+          "Fusion: Malay Inang rhythm combined with western harmonic progression"
+        ],
+        instruments: ["Gamelan set or Metallophones (Slendro tuned)", "Gongs", "Kulintang / Bonang", "Full classroom acoustic/digital ensemble"],
+        termIdeas: [
+          { term: "Term 1", theme: "Gamelan Gong Cycle", desc: "Counting the 8-beat or 16-beat cycle with the resonant deep gong on beat 8/16." },
+          { term: "Term 2", theme: "Interlocking Polyphony", desc: "Two metallophone players alternating notes in high-speed harmony." },
+          { term: "Term 3", theme: "Graduation Showcase Prep", desc: "Class self-directed rehearsal: lyric rewrite of popular song for teachers." },
+          { term: "Term 4", theme: "Musical Legacy Reflections", desc: "Pupils assemble their 6-year Primary School music memories playlist." }
+        ]
+      }
+    };
+
+    // Library of 24+ Curated MOE Music Teaching Ideas
+    const TEACHING_SPARKS_DB = [
+      {
+        id: "spark_1",
+        title: "The Beat Detective (Rhythm Hunt)",
+        category: "warmup",
+        level: "P1-P4",
+        duration: "7 mins",
+        domain: "Listening & Pulse",
+        desc: "One student Detective steps out. Class selects a secret Leader who silently morphs body percussion (clap, snap, chest pat, toe tap). Detective returns and has 3 guesses to deduce who is directing the pulse!",
+        materials: "No materials needed (Active body percussion)"
+      },
+      {
+        id: "spark_2",
+        title: "The Warm Candle Recorder Breath",
+        category: "instruments",
+        level: "P3-P4",
+        duration: "5 mins",
+        domain: "Recorder Technique",
+        desc: "Hold index finger 3 inches in front of lips. Ask students to blow gentle 'poo' or 'too' warm air as if keeping a candle flame gently flickering without blowing it out. Then apply same breath to note 'B'. Tone instantly turns sweet instead of squeaky!",
+        materials: "Soprano recorders"
+      },
+      {
+        id: "spark_3",
+        title: "Dalcroze Ribbon Dynamics & Freeze",
+        category: "movement",
+        level: "P1-P3",
+        duration: "10 mins",
+        domain: "Dalcroze Movement & Phrasing",
+        desc: "Hand each child a colored silk scarf or crepe ribbon. Play music with fluctuating dynamics (e.g. Peer Gynt In the Hall of the Mountain King). High ribbon leaps on Forte, low ripples on Piano, statue freeze when sound stops.",
+        materials: "Silk scarves or ribbons, classical music audio track"
+      },
+      {
+        id: "spark_4",
+        title: "Kompang 'Pak & Bung' Call-and-Response",
+        category: "heritage",
+        level: "P3-P5",
+        duration: "15 mins",
+        domain: "Singapore Ethnic Percussion",
+        desc: "Demonstrate Pak (high slap on rim) and Bung (deep resonant thumb/palm on centre). Teacher plays a 4-beat question pattern; student rows alternate answering with the complementary pattern. Builds cultural polyrhythms effortlessly.",
+        materials: "Classroom Kompangs or hand frame drums"
+      },
+      {
+        id: "spark_5",
+        title: "Ukulele 'Switch-Race' 30-Second Challenge",
+        category: "instruments",
+        level: "P5-P6",
+        duration: "8 mins",
+        domain: "Ukulele Muscle Memory",
+        desc: "Pairs of students partner up. One counts on stopwatch: how many clean switches between C chord and A minor chord can partner achieve in 30 seconds? Partner audits finger buzzes. Encourages joyful peer coaching.",
+        materials: "Ukuleles, timer"
+      },
+      {
+        id: "spark_6",
+        title: "Vocal Rollercoaster Siren & Solfège Ladder",
+        category: "singing",
+        level: "P1-P3",
+        duration: "5 mins",
+        domain: "Vocal Exploration & Kodály",
+        desc: "Draw loopy rollercoaster tracks on whiteboard. Students trace the track with finger while singing 'Ooooo' glissando high and low. Finish by landing precisely on pitch 'Sol' and 'Mi' with hand signs.",
+        materials: "Whiteboard marker, Kodály pitch ladder"
+      },
+      {
+        id: "spark_7",
+        title: "Pass the Clap Rhythm Circle",
+        category: "warmup",
+        level: "P1-P6",
+        duration: "6 mins",
+        domain: "Focus & Ensemble Cohesion",
+        desc: "Students stand in a circle. Player A looks at Player B, and both must clap simultaneously with eye contact, then B looks at C and claps. Time how fast a clean clap travels all the way around the 40-pupil music room without a missed beat!",
+        materials: "None"
+      },
+      {
+        id: "spark_8",
+        title: "Angklung Waterfall Arpeggio",
+        category: "heritage",
+        level: "P3-P5",
+        duration: "15 mins",
+        domain: "Indonesian/Malay Bamboo Ensembles",
+        desc: "Assign bamboo tubes 1 to 8 (Do to Do'). Teacher acts as conductor sweeping hand across the room. As hand passes, each student shakes their angklung in a cascading shimmering waterfall wave. Practice crescendo and diminuendo.",
+        materials: "Diatonic Angklung set"
+      },
+      {
+        id: "spark_9",
+        title: "Soundtrack the Silent Cartoon",
+        category: "movement",
+        level: "P2-P5",
+        duration: "20 mins",
+        domain: "Creative Composition & Timbre",
+        desc: "Play a 60-second muted classic animated cartoon clip (Tom & Jerry, Pink Panther, or nature clip). Teams of 4 choose 3 instruments (guiro for scurrying, slide whistle/kazoo for falling, cymbal for crash) to provide live Foley sound effects.",
+        materials: "Projector, assorted percussion (guiros, bells, cymbals, slide whistles)"
+      },
+      {
+        id: "spark_10",
+        title: "The Human Piano Keys (Kodály Drill)",
+        category: "singing",
+        level: "P1-P4",
+        duration: "10 mins",
+        domain: "Pitch Recognition",
+        desc: "Invite 5 students to stand at the front, each holding a card: Do, Re, Mi, Fa, Sol. Teacher or classmate 'plays' them by gently touching their shoulder. The 'key' must sing their note clearly with the correct pitch. Class checks if chord is in tune!",
+        materials: "Solfège name cards"
+      },
+      {
+        id: "spark_11",
+        title: "National Day Song Mashup / Ostinato",
+        category: "heritage",
+        level: "P4-P6",
+        duration: "20 mins",
+        domain: "Singapore National Songs",
+        desc: "Group 1 sings the chorus of 'Home' while Group 2 layers a rhythmic recorder motif from 'Count On Me Singapore'. Teaches counter-melody and harmonic coexistence.",
+        materials: "Sheet music / Lyrics projection"
+      },
+      {
+        id: "spark_12",
+        title: "Chrome Music Lab 'Loop in 5' Exit Ticket",
+        category: "warmup",
+        level: "P4-P6",
+        duration: "10 mins",
+        domain: "Digital Music Literacy",
+        desc: "Students on school iPads open Chrome Music Lab Song Maker. In 5 minutes, design a 4-bar pentatonic melody with drum pulse. Save screenshot or play for neighbor before packing up.",
+        materials: "School iPads / Chromebooks"
+      }
+    ];
+
+    // Library of Mother-Kid Bonding Sparks for Adeline's 2 Kids
+    const HOME_SPARKS_DB = [
+      {
+        title: "The Living Room Opera (Tidy-Up Edition)",
+        icon: "🎭",
+        time: "10 mins",
+        desc: "Turn packing up toys or school bags into an over-the-top dramatic Italian opera. Sing all instructions in dramatic operatic voices ('Oh please, pick up the red pencil from the floooor!'). The kids will laugh and pack 3x faster!"
+      },
+      {
+        title: "Kitchen Pot-and-Pan Drum Circle",
+        icon: "🍳",
+        time: "15 mins",
+        desc: "While cooking dinner, give Child 1 and Child 2 wooden spoons and overturned silicone bowls/pot lids. Teach them an echo rhythm game while mum leads the rhythm from the stove."
+      },
+      {
+        title: "Bedtime Soundscape Storytelling",
+        icon: "🌙",
+        time: "15 mins",
+        desc: "During tonight's bedtime story, assign each kid a sound effect role. Child 1 makes the wind or rustling trees (shh-shh); Child 2 makes the little animal footsteps (finger taps). Peaceful and calming sensory wind-down."
+      },
+      {
+        title: "The Emotion Tempo Guessing Game",
+        icon: "🎨",
+        time: "10 mins",
+        desc: "Sit with both kids and tap a rhythm on a cushion. Fast and frantic (Allegro - Excited/Nervous), slow and heavy (Largo - Tired/Calm), light and skipping (Vivace - Joyful). Ask: 'Which animal or feeling does this sound like?'"
+      },
+      {
+        title: "Secret Family Handshake with a Beat",
+        icon: "🤝",
+        time: "10 mins",
+        desc: "Create a 4-beat clapping and fist-bump routine with each child individually. Whenever they finish their spelling list or homework without fuss, finish with your special beat!"
+      },
+      {
+        title: "Weekend Sound Hunt at Botanic Gardens",
+        icon: "🌿",
+        time: "Weekend",
+        desc: "On Saturday, take both kids for a walk. Close eyes for 60 seconds and count how many natural sounds they hear: black-naped oriole, water fountain, rustling bamboo, footsteps on gravel."
+      }
+    ];
+
+    // Default Application State
+    const DEFAULT_DATA = {
+      tempoMood: "Moderato",
+      dailyWin: "",
+      dailyFunny: "",
+      kidProfiles: {
+        kid1: { name: "Ray", grade: "Primary 3 • Age 9" },
+        kid2: { name: "Chloe", grade: "Primary 1 • Age 7" }
+      },
+      kidNotes: {
+        kid1: "Spelling (Ting Xie) test on Thursday; Bring recorder every Wed; Swimming gear on Friday morning.",
+        kid2: "English spelling words due Tuesday; Water bottle always filled with lemon slice; Craft scissors labeled."
+      },
+      kidChecklist: {
+        kid1: [
+          { id: "k1_1", text: "Complete Chinese Ting Xie practice sheet", done: false },
+          { id: "k1_2", text: "Pack Primary 3 school bag & pencil case", done: true },
+          { id: "k1_3", text: "20 mins English storybook reading", done: false }
+        ],
+        kid2: [
+          { id: "k2_1", text: "Maths workbook Page 14-16", done: true },
+          { id: "k2_2", text: "Fill school water bottle for tomorrow", done: false },
+          { id: "k2_3", text: "Prepare school uniform & black shoes", done: false }
+        ]
+      },
+      tasks: [
+        { id: "t1", title: "Photocopy P3 Soprano Recorder 'BAG' fingering charts for Class 3A & 3B", category: "school", slot: "school-am", priority: "urgent", completed: false },
+        { id: "t2", title: "Test audio Bluetooth speaker in Music Room 2", category: "school", slot: "cca-prep", priority: "normal", completed: true },
+        { id: "t3", title: "Sign Ray's P3 Math diagnostic test reply slip", category: "home", slot: "kid-transit", priority: "urgent", completed: false },
+        { id: "t4", title: "Prepare Chloe's recess snack box (sliced apples + biscuits)", category: "home", slot: "morning", priority: "normal", completed: true },
+        { id: "t5", title: "15-minute quiet herbal tea & breathing before school dismisses", category: "self", slot: "cca-prep", priority: "low", completed: false },
+        { id: "t6", title: "Check Choir CCA attendance & score binder for Friday rehearsal", category: "school", slot: "cca-prep", priority: "normal", completed: false }
+      ],
+      lessonPlans: [
+        {
+          id: "lp_sample1",
+          grade: "Primary 3",
+          duration: "2 Periods (60 mins)",
+          termWeek: "Term 2 Week 4",
+          topic: "Di Tanjong Katong – Kompang Pulse & Recorder Note 'B'",
+          outcomes: "1. Sing chorus in tune with clear diction; 2. Play steady beat Pak-Bung rhythm on Kompang; 3. Sound note 'B' on recorder without squeaking.",
+          warmup: "Vocal sirens following ocean wave shapes on board (5 mins). Echo-clap syncopated rhythm.",
+          core: "1. Group singing of Di Tanjong Katong with lyrics analysis; 2. Kompang hand technique drill (Pak on rim, Bung in middle); 3. Left-hand recorder thumb-and-one finger grip check.",
+          closure: "Class split: Half play Kompang pulse, half play recorder note B on chorus cue. Thumbs check.",
+          dateCreated: "2026-10-20"
+        }
+      ]
+    };
+
+    // Load data from LocalStorage or initialize
+    let appData = {};
+    function loadData() {
+      const stored = localStorage.getItem("adeline_harmonyhub_data");
+      if (stored) {
+        try {
+          appData = JSON.parse(stored);
+        } catch (e) {
+          console.error("Failed to parse stored data:", e);
+          appData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+        }
+      } else {
+        appData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+      }
+    }
+
+    function saveData() {
+      localStorage.setItem("adeline_harmonyhub_data", JSON.stringify(appData));
+      updateUI();
+    }
+
+    // Tab Navigation
+    function switchTab(tabId) {
+      document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
+      const target = document.getElementById("tab-" + tabId);
+      if (target) target.classList.remove("hidden");
+
+      document.querySelectorAll(".tab-btn").forEach(btn => {
+        btn.classList.remove("bg-coral-500", "text-white", "shadow-sm");
+        btn.classList.add("text-harmony-700", "hover:bg-harmony-100");
+      });
+
+      const activeBtn = document.getElementById("tab-btn-" + tabId);
+      if (activeBtn) {
+        activeBtn.classList.add("bg-coral-500", "text-white", "shadow-sm");
+        activeBtn.classList.remove("text-harmony-700", "hover:bg-harmony-100");
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      lucide.createIcons();
+    }
+
+    // Task Management
+    let currentFilter = 'all';
+    function setTaskFilter(filter) {
+      currentFilter = filter;
+      document.querySelectorAll('.task-filter-btn').forEach(btn => {
+        btn.classList.remove('bg-white', 'text-harmony-900', 'shadow-xs');
+        btn.classList.add('text-harmony-600');
+      });
+      const activeBtn = document.getElementById('filter-' + filter);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-white', 'text-harmony-900', 'shadow-xs');
+        activeBtn.classList.remove('text-harmony-600');
+      }
+      renderTasks();
+    }
+
+    function handleAddTask(e) {
+      e.preventDefault();
+      const titleInput = document.getElementById('newTaskTitle');
+      const title = titleInput.value.trim();
+      if (!title) return;
+
+      const category = document.getElementById('newTaskCategory').value;
+      const slot = document.getElementById('newTaskSlot').value;
+      const priority = document.getElementById('newTaskPriority').value;
+
+      const newTask = {
+        id: 't_' + Date.now(),
+        title,
+        category,
+        slot,
+        priority,
+        completed: false
+      };
+
+      appData.tasks.unshift(newTask);
+      titleInput.value = '';
+      saveData();
+      playNote(392.00, 'Sol'); // confirmation chime
+    }
+
+    function fillTaskPreset(title, cat, slot, prio) {
+      document.getElementById('newTaskTitle').value = title;
+      document.getElementById('newTaskCategory').value = cat;
+      document.getElementById('newTaskSlot').value = slot;
+      document.getElementById('newTaskPriority').value = prio;
+    }
+
+    function toggleTask(taskId) {
+      const task = appData.tasks.find(t => t.id === taskId);
+      if (task) {
+        task.completed = !task.completed;
+        if (task.completed) {
+          playNote(523.25, 'Do*'); // cheerful ding
+        }
+        saveData();
+      }
+    }
+
+    function deleteTask(taskId) {
+      appData.tasks = appData.tasks.filter(t => t.id !== taskId);
+      saveData();
+    }
+
+    function clearCompletedTasks() {
+      appData.tasks = appData.tasks.filter(t => !t.completed);
+      saveData();
+    }
+
+    function renderTasks() {
+      const container = document.getElementById('taskList');
+      if (!container) return;
+
+      const filtered = appData.tasks.filter(task => {
+        if (currentFilter === 'all') return true;
+        return task.category === currentFilter;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-8 text-harmony-400 space-y-1">
+            <i data-lucide="sparkles" class="w-7 h-7 mx-auto opacity-40"></i>
+            <p class="text-xs">No tasks in this view right now. You're in beautiful flow!</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      const slotLabels = {
+        "morning": "🌅 06:30 Morning",
+        "school-am": "🎵 Morning Periods",
+        "school-pm": "🎹 Afternoon Periods",
+        "cca-prep": "📋 Prep & CCA",
+        "kid-transit": "🎒 Kid Transit & Dinner",
+        "night": "🌙 Evening Wind-down"
+      };
+
+      const categoryBadges = {
+        "school": { text: "MOE Music", class: "bg-amber-100 text-amber-800 border-amber-200" },
+        "home": { text: "2 Kids & Home", class: "bg-sage-100 text-sage-800 border-sage-200" },
+        "self": { text: "Me-Time", class: "bg-purple-100 text-purple-800 border-purple-200" }
+      };
+
+      const priorityPills = {
+        "urgent": "text-red-600 bg-red-50 border-red-200 font-bold",
+        "normal": "text-harmony-600 bg-harmony-50 border-harmony-200",
+        "low": "text-emerald-600 bg-emerald-50 border-emerald-200"
+      };
+
+      container.innerHTML = filtered.map(task => {
+        const catInfo = categoryBadges[task.category] || categoryBadges.school;
+        const prioClass = priorityPills[task.priority] || priorityPills.normal;
+        const slotText = slotLabels[task.slot] || task.slot;
+
+        return `
+          <div class="group flex items-start justify-between gap-3 p-3 rounded-2xl border transition ${task.completed ? 'bg-harmony-50/70 border-harmony-200/50 opacity-60' : 'bg-white border-harmony-200 hover:border-coral-300 shadow-xs'}">
+            <div class="flex items-start gap-3 flex-1 min-w-0">
+              <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask('${task.id}')" 
+                class="mt-1 w-4 h-4 rounded text-coral-500 focus:ring-0 cursor-pointer transition">
+              <div class="flex-1 min-w-0 space-y-1">
+                <p class="text-xs sm:text-sm font-medium ${task.completed ? 'line-through text-harmony-400' : 'text-harmony-900'} break-words">
+                  ${escapeHtml(task.title)}
+                </p>
+                <div class="flex flex-wrap items-center gap-1.5 text-[10px]">
+                  <span class="px-2 py-0.5 rounded-full border ${catInfo.class}">${catInfo.text}</span>
+                  <span class="px-1.5 py-0.5 rounded text-harmony-500 bg-harmony-100/60 font-medium">${slotText}</span>
+                  ${task.priority === 'urgent' ? '<span class="px-1.5 py-0.5 rounded border text-red-700 bg-red-50 border-red-200 font-bold">● Urgent</span>' : ''}
+                </div>
+              </div>
+            </div>
+            <button onclick="deleteTask('${task.id}')" class="opacity-0 group-hover:opacity-100 p-1 text-harmony-400 hover:text-red-500 transition rounded" title="Delete">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    // Kids Matters Logic
+    function updateKidNamesDisplay() {
+      const k1Name = appData.kidProfiles.kid1.name || "Child 1";
+      const k1Grade = appData.kidProfiles.kid1.grade || "Primary School";
+      const k2Name = appData.kidProfiles.kid2.name || "Child 2";
+      const k2Grade = appData.kidProfiles.kid2.grade || "Junior";
+
+      const k1El = document.getElementById("kid1NameDisplay");
+      if (k1El) k1El.innerText = k1Name;
+      const k2El = document.getElementById("kid2NameDisplay");
+      if (k2El) k2El.innerText = k2Name;
+
+      const pk1El = document.getElementById("profileKid1Name");
+      if (pk1El) pk1El.innerText = k1Name;
+      const pk1gEl = document.getElementById("profileKid1Grade");
+      if (pk1gEl) pk1gEl.innerText = k1Grade;
+
+      const pk2El = document.getElementById("profileKid2Name");
+      if (pk2El) pk2El.innerText = k2Name;
+      const pk2gEl = document.getElementById("profileKid2Grade");
+      if (pk2gEl) pk2gEl.innerText = k2Grade;
+
+      const note1 = document.getElementById("kid1Notes");
+      if (note1) note1.value = appData.kidNotes.kid1 || "";
+      const note2 = document.getElementById("kid2Notes");
+      if (note2) note2.value = appData.kidNotes.kid2 || "";
+    }
+
+    function renderKidChecklists() {
+      const c1 = document.getElementById("kid1CustomChecklist");
+      const c2 = document.getElementById("kid2CustomChecklist");
+
+      if (c1) {
+        c1.innerHTML = appData.kidChecklist.kid1.map(item => `
+          <div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-sage-50/50 border border-sage-200/40">
+            <label class="flex items-center gap-2 cursor-pointer flex-1">
+              <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleCustomKidCheck(1, '${item.id}')" class="rounded text-sage-600 focus:ring-0 w-3.5 h-3.5">
+              <span class="${item.done ? 'line-through text-harmony-400' : 'text-harmony-800'}">${escapeHtml(item.text)}</span>
+            </label>
+            <button onclick="removeKidItem(1, '${item.id}')" class="text-harmony-400 hover:text-red-500 text-[10px]">✕</button>
+          </div>
+        `).join('');
+      }
+
+      if (c2) {
+        c2.innerHTML = appData.kidChecklist.kid2.map(item => `
+          <div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-coral-50/50 border border-coral-200/40">
+            <label class="flex items-center gap-2 cursor-pointer flex-1">
+              <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleCustomKidCheck(2, '${item.id}')" class="rounded text-coral-600 focus:ring-0 w-3.5 h-3.5">
+              <span class="${item.done ? 'line-through text-harmony-400' : 'text-harmony-800'}">${escapeHtml(item.text)}</span>
+            </label>
+            <button onclick="removeKidItem(2, '${item.id}')" class="text-harmony-400 hover:text-red-500 text-[10px]">✕</button>
+          </div>
+        `).join('');
+      }
+    }
+
+    function addKidItem(e, kidNum) {
+      e.preventDefault();
+      const input = document.getElementById(`newKid${kidNum}Task`);
+      const text = input.value.trim();
+      if (!text) return;
+      
+      const key = kidNum === 1 ? 'kid1' : 'kid2';
+      appData.kidChecklist[key].push({
+        id: 'kc_' + Date.now(),
+        text,
+        done: false
+      });
+      input.value = '';
+      saveData();
+    }
+
+    function removeKidItem(kidNum, id) {
+      const key = kidNum === 1 ? 'kid1' : 'kid2';
+      appData.kidChecklist[key] = appData.kidChecklist[key].filter(i => i.id !== id);
+      saveData();
+    }
+
+    function toggleCustomKidCheck(kidNum, id) {
+      const key = kidNum === 1 ? 'kid1' : 'kid2';
+      const item = appData.kidChecklist[key].find(i => i.id === id);
+      if (item) {
+        item.done = !item.done;
+        if (item.done) playNote(440.00, 'La');
+        saveData();
+      }
+    }
+
+    function saveKidNotes(kidNum) {
+      const key = kidNum === 1 ? 'kid1' : 'kid2';
+      const val = document.getElementById(`kid${kidNum}Notes`).value;
+      appData.kidNotes[key] = val;
+      saveData();
+    }
+
+    function openKidSettingsModal() {
+      document.getElementById('modalKid1Name').value = appData.kidProfiles.kid1.name;
+      document.getElementById('modalKid1Grade').value = appData.kidProfiles.kid1.grade;
+      document.getElementById('modalKid2Name').value = appData.kidProfiles.kid2.name;
+      document.getElementById('modalKid2Grade').value = appData.kidProfiles.kid2.grade;
+      document.getElementById('kidSettingsModal').classList.remove('hidden');
+    }
+
+    function closeKidSettingsModal() {
+      document.getElementById('kidSettingsModal').classList.add('hidden');
+    }
+
+    function handleSaveKidSettings(e) {
+      e.preventDefault();
+      appData.kidProfiles.kid1.name = document.getElementById('modalKid1Name').value.trim();
+      appData.kidProfiles.kid1.grade = document.getElementById('modalKid1Grade').value.trim();
+      appData.kidProfiles.kid2.name = document.getElementById('modalKid2Name').value.trim();
+      appData.kidProfiles.kid2.grade = document.getElementById('modalKid2Grade').value.trim();
+      closeKidSettingsModal();
+      saveData();
+    }
+
+    // Reflections & Mood Tempo
+    function updateTempoMood() {
+      const val = document.getElementById('tempoMoodSelect').value;
+      appData.tempoMood = val;
+      saveData();
+    }
+
+    function saveReflection() {
+      appData.dailyWin = document.getElementById('dailyWinInput').value;
+      appData.dailyFunny = document.getElementById('dailyFunnyInput').value;
+      saveData();
+    }
+
+    // Random Teaching Spark & Generator
+    let currentSparkIndex = 0;
+    function generateRandomSpark() {
+      currentSparkIndex = Math.floor(Math.random() * TEACHING_SPARKS_DB.length);
+      const spark = TEACHING_SPARKS_DB[currentSparkIndex];
+      renderSparkCard(spark);
+      playChimeChord();
+    }
+
+    function renderSparkCard(spark) {
+      document.getElementById('sparkTitle').innerText = spark.title;
+      document.getElementById('sparkLevelTag').innerText = spark.level + " Focus";
+      document.getElementById('sparkDomain').innerText = spark.domain;
+      document.getElementById('sparkDescription').innerText = spark.desc;
+      document.getElementById('sparkDuration').innerText = spark.duration + " • " + spark.category;
+    }
+
+    function addSparkToTodayPlan() {
+      const spark = TEACHING_SPARKS_DB[currentSparkIndex];
+      const newTask = {
+        id: 't_' + Date.now(),
+        title: `MOE Lesson Activity: "${spark.title}" with class`,
+        category: 'school',
+        slot: 'school-am',
+        priority: 'urgent',
+        completed: false
+      };
+      appData.tasks.unshift(newTask);
+      saveData();
+      alert(`Spark "${spark.title}" has been added to today's task logger!`);
+    }
+
+    // MOE Grade Matrix Viewer
+    let currentGradeKey = 'p3';
+    function showGradeSyllabus(gradeKey) {
+      currentGradeKey = gradeKey;
+      document.querySelectorAll('.grade-tab-btn').forEach(btn => {
+        btn.classList.remove('bg-coral-500', 'text-white', 'shadow-xs');
+        btn.classList.add('bg-harmony-100', 'text-harmony-700');
+      });
+      const activeBtn = document.getElementById('grade-btn-' + gradeKey);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-coral-500', 'text-white', 'shadow-xs');
+        activeBtn.classList.remove('bg-harmony-100', 'text-harmony-700');
+      }
+
+      const gradeData = MOE_SYLLABUS[gradeKey];
+      const container = document.getElementById('gradeSyllabusDisplay');
+      if (!container || !gradeData) return;
+
+      container.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Grade Overview Left (7 cols) -->
+          <div class="lg:col-span-7 bg-white rounded-3xl p-6 border border-harmony-200 shadow-sm space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-harmony-100">
+              <div>
+                <span class="text-xs font-bold text-coral-600 uppercase tracking-wider">${gradeData.grade} (${gradeData.ageRange})</span>
+                <h3 class="text-xl font-bold font-serif text-harmony-900">${gradeData.focus}</h3>
+              </div>
+              <button onclick="prefillLessonPlanForGrade('${gradeData.grade}', '${escapeHtml(gradeData.repertoire[0])}')" class="text-xs font-semibold text-coral-600 hover:text-coral-700 flex items-center gap-1">
+                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Plan this Grade
+              </button>
+            </div>
+            
+            <p class="text-xs text-harmony-600 italic">"${gradeData.tagline}"</p>
+
+            <!-- Learning Outcomes List -->
+            <div class="space-y-2">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-harmony-800 flex items-center gap-1.5">
+                <i data-lucide="target" class="w-4 h-4 text-coral-500"></i> Core MOE Learning Outcomes:
+              </h4>
+              <ul class="space-y-1.5 text-xs text-harmony-700">
+                ${gradeData.learningOutcomes.map(lo => `
+                  <li class="flex items-start gap-2">
+                    <span class="text-coral-500 font-bold shrink-0">✓</span>
+                    <span>${lo}</span>
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+
+            <!-- Instruments in Use -->
+            <div class="pt-3 border-t border-harmony-100">
+              <h4 class="text-xs font-bold text-harmony-800 mb-2 flex items-center gap-1.5">
+                <i data-lucide="guitar" class="w-4 h-4 text-amber-500"></i> Recommended Instruments & Gear:
+              </h4>
+              <div class="flex flex-wrap gap-1.5">
+                ${gradeData.instruments.map(inst => `
+                  <span class="bg-amber-50 text-amber-800 border border-amber-200 text-[11px] px-2.5 py-1 rounded-lg font-medium">${inst}</span>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+
+          <!-- Suggested Term Progression Right (5 cols) -->
+          <div class="lg:col-span-5 bg-white rounded-3xl p-6 border border-harmony-200 shadow-sm space-y-4">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-harmony-800 flex items-center gap-1.5">
+              <i data-lucide="compass" class="w-4 h-4 text-sage-600"></i> Term-by-Term Scheme of Work Sparks
+            </h4>
+            
+            <div class="space-y-2.5 text-xs">
+              ${gradeData.termIdeas.map(t => `
+                <div class="p-3 bg-[#faf7f5] rounded-2xl border border-harmony-200/70 space-y-1">
+                  <div class="flex items-center justify-between">
+                    <span class="font-bold text-coral-700">${t.term}</span>
+                    <span class="text-[10px] bg-white px-2 py-0.5 rounded border border-harmony-200 text-harmony-700 font-medium">${t.theme}</span>
+                  </div>
+                  <p class="text-harmony-600 leading-relaxed text-[11px]">${t.desc}</p>
+                </div>
+              `).join('')}
+            </div>
+
+            <!-- Representative Repertoire -->
+            <div class="pt-2 border-t border-harmony-100">
+              <h5 class="text-[11px] font-bold text-harmony-700 mb-1.5">Key Songs / Cultural Works:</h5>
+              <div class="space-y-1 text-xs text-harmony-600">
+                ${gradeData.repertoire.map(song => `
+                  <div class="flex items-center gap-2">
+                    <span class="text-coral-500">♪</span>
+                    <span>${song}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    // Sparks Tab Search & Filter
+    let activeSparkFilter = 'all';
+    function filterSparks(category) {
+      activeSparkFilter = category;
+      document.querySelectorAll('.spark-filter-btn').forEach(btn => {
+        btn.classList.remove('bg-coral-500', 'text-white');
+        btn.classList.add('bg-harmony-100', 'text-harmony-700');
+      });
+      event.target.classList.add('bg-coral-500', 'text-white');
+      event.target.classList.remove('bg-harmony-100', 'text-harmony-700');
+      renderSparksGrid();
+    }
+
+    function searchSparks() {
+      renderSparksGrid();
+    }
+
+    function renderSparksGrid() {
+      const container = document.getElementById('sparksGrid');
+      if (!container) return;
+
+      const query = (document.getElementById('sparkSearchInput')?.value || '').toLowerCase().trim();
+
+      const filtered = TEACHING_SPARKS_DB.filter(spark => {
+        const matchesCategory = (activeSparkFilter === 'all' || spark.category === activeSparkFilter);
+        const matchesSearch = !query || 
+          spark.title.toLowerCase().includes(query) ||
+          spark.desc.toLowerCase().includes(query) ||
+          spark.domain.toLowerCase().includes(query) ||
+          spark.level.toLowerCase().includes(query);
+        return matchesCategory && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full text-center py-12 text-harmony-400">
+            <p>No matching activities found for "${query}". Try searching "rhythm", "recorder", or "movement".</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(spark => `
+        <div class="bg-white rounded-3xl p-5 border border-harmony-200 shadow-sm hover:border-coral-300 transition space-y-3 flex flex-col justify-between">
+          <div class="space-y-2.5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-coral-100 text-coral-700">${spark.level}</span>
+              <span class="text-[11px] text-harmony-500 flex items-center gap-1 font-mono">
+                <i data-lucide="clock" class="w-3 h-3 text-coral-500"></i> ${spark.duration}
+              </span>
+            </div>
+            <h4 class="font-bold text-harmony-900 text-sm leading-snug">${spark.title}</h4>
+            <span class="inline-block text-[10px] font-semibold text-harmony-600 bg-harmony-100 px-2 py-0.5 rounded">${spark.domain}</span>
+            <p class="text-xs text-harmony-600 leading-relaxed">${spark.desc}</p>
+          </div>
+
+          <div class="pt-3 border-t border-harmony-100 flex items-center justify-between text-xs">
+            <span class="text-[10px] text-harmony-400 truncate max-w-[150px]">${spark.materials}</span>
+            <button onclick="quickAddSparkTask('${escapeHtml(spark.title)}')" class="text-coral-600 hover:text-coral-700 font-semibold flex items-center gap-1 text-[11px]">
+              <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Teach Today
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    function quickAddSparkTask(title) {
+      const newTask = {
+        id: 't_' + Date.now(),
+        title: `Teach Game: ${title}`,
+        category: 'school',
+        slot: 'school-am',
+        priority: 'urgent',
+        completed: false
+      };
+      appData.tasks.unshift(newTask);
+      saveData();
+      alert(`Activity "${title}" added to your daily task schedule!`);
+    }
+
+    // Home Sparks Shuffle
+    function renderNewHomeSparks() {
+      const container = document.getElementById('homeSparksGrid');
+      if (!container) return;
+
+      // Shuffle and pick 3
+      const shuffled = [...HOME_SPARKS_DB].sort(() => 0.5 - Math.random()).slice(0, 3);
+      container.innerHTML = shuffled.map(s => `
+        <div class="bg-[#faf7f5] rounded-2xl p-4 border border-harmony-200/80 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xl">${s.icon}</span>
+            <span class="text-[10px] bg-white border border-harmony-200 px-2 py-0.5 rounded text-harmony-600 font-mono">${s.time}</span>
+          </div>
+          <h4 class="font-bold text-harmony-900 text-xs">${s.title}</h4>
+          <p class="text-xs text-harmony-600 leading-relaxed">${s.desc}</p>
+        </div>
+      `).join('');
+    }
+
+    // Lesson Plan Builder
+    function openLessonPlanModal() {
+      document.getElementById('lessonPlanModal').classList.remove('hidden');
+    }
+
+    function closeLessonPlanModal() {
+      document.getElementById('lessonPlanModal').classList.add('hidden');
+    }
+
+    function prefillLessonPlanForGrade(grade, song) {
+      document.getElementById('lpGrade').value = grade;
+      document.getElementById('lpTopic').value = `${song} – Performance & Listening Exploration`;
+      openLessonPlanModal();
+    }
+
+    function handleSaveLessonPlan(e) {
+      e.preventDefault();
+      const plan = {
+        id: 'lp_' + Date.now(),
+        grade: document.getElementById('lpGrade').value,
+        duration: document.getElementById('lpDuration').value,
+        termWeek: document.getElementById('lpTermWeek').value,
+        topic: document.getElementById('lpTopic').value,
+        outcomes: document.getElementById('lpOutcomes').value,
+        warmup: document.getElementById('lpWarmup').value,
+        core: document.getElementById('lpCore').value,
+        closure: document.getElementById('lpClosure').value,
+        dateCreated: new Date().toLocaleDateString('en-SG')
+      };
+
+      if (!appData.lessonPlans) appData.lessonPlans = [];
+      appData.lessonPlans.unshift(plan);
+      closeLessonPlanModal();
+      saveData();
+      switchTab('moe-curriculum');
+      alert('Lesson plan successfully saved to your archives!');
+    }
+
+    function renderSavedPlans() {
+      const container = document.getElementById('savedPlansList');
+      const countEl = document.getElementById('savedPlansCount');
+      if (!container) return;
+
+      const plans = appData.lessonPlans || [];
+      if (countEl) countEl.innerText = `${plans.length} Saved Plans`;
+
+      if (plans.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full text-center py-8 text-harmony-400">
+            <p class="text-xs">No saved lesson plans yet. Click "Draft New Lesson Plan" to create one!</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = plans.map(p => `
+        <div class="bg-[#faf7f5] rounded-2xl p-4 border border-harmony-200/80 space-y-2.5 flex flex-col justify-between">
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between text-[10px]">
+              <span class="bg-coral-100 text-coral-800 font-bold px-2 py-0.5 rounded">${p.grade}</span>
+              <span class="text-harmony-400">${p.termWeek}</span>
+            </div>
+            <h4 class="font-bold text-harmony-900 text-sm leading-snug">${escapeHtml(p.topic)}</h4>
+            <p class="text-xs text-harmony-600 line-clamp-2"><strong>Core:</strong> ${escapeHtml(p.core || p.outcomes)}</p>
+          </div>
+          <div class="pt-2 border-t border-harmony-200/60 flex items-center justify-between text-xs">
+            <span class="text-[10px] text-harmony-400">${p.duration}</span>
+            <button onclick="deleteLessonPlan('${p.id}')" class="text-red-500 hover:text-red-700 text-xs font-semibold">Delete</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function deleteLessonPlan(id) {
+      if (confirm('Delete this lesson plan?')) {
+        appData.lessonPlans = appData.lessonPlans.filter(p => p.id !== id);
+        saveData();
+      }
+    }
+
+    // UI Updates and Statistics
+    function updateUI() {
+      // Metrics
+      const schoolPending = appData.tasks.filter(t => t.category === 'school' && !t.completed).length;
+      const homePending = appData.tasks.filter(t => t.category === 'home' && !t.completed).length;
+      
+      const statSchoolEl = document.getElementById('statSchoolPending');
+      if (statSchoolEl) statSchoolEl.innerText = schoolPending;
+      
+      const statHomeEl = document.getElementById('statHomePending');
+      if (statHomeEl) statHomeEl.innerText = homePending;
+
+      const totalTasks = appData.tasks.length;
+      const completedTasks = appData.tasks.filter(t => t.completed).length;
+      const pct = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+      
+      const barEl = document.getElementById('taskProgressBar');
+      if (barEl) barEl.style.width = pct + '%';
+      
+      const pctEl = document.getElementById('taskProgressPercent');
+      if (pctEl) pctEl.innerText = `${pct}% Complete (${completedTasks}/${totalTasks})`;
+
+      const countSumEl = document.getElementById('taskCountSummary');
+      if (countSumEl) {
+        countSumEl.innerText = `${appData.tasks.length} total tasks • ${totalTasks - completedTasks} remaining`;
+      }
+
+      // Tempo mood
+      const tempoEl = document.getElementById('tempoMoodSelect');
+      if (tempoEl && appData.tempoMood) tempoEl.value = appData.tempoMood;
+
+      // Reflection
+      const winEl = document.getElementById('dailyWinInput');
+      if (winEl) winEl.value = appData.dailyWin || '';
+      const funnyEl = document.getElementById('dailyFunnyInput');
+      if (funnyEl) funnyEl.value = appData.dailyFunny || '';
+
+      // Child views
+      updateKidNamesDisplay();
+      renderKidChecklists();
+
+      // Render tasks and plans
+      renderTasks();
+      renderSavedPlans();
+    }
+
+    // Export / Import / Backup
+    function exportData() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `adeline_harmonyhub_backup_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function importData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (parsed && parsed.tasks) {
+            appData = parsed;
+            saveData();
+            alert('HarmonyHub data successfully restored!');
+          } else {
+            alert('Invalid backup file format.');
+          }
+        } catch (err) {
+          alert('Error reading backup JSON file.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function resetToSampleData() {
+      if (confirm('Reset to initial sample data? Your custom additions will be restored to defaults.')) {
+        appData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+        saveData();
+      }
+    }
+
+    function printView() {
+      window.print();
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // Initialization
+    window.addEventListener('DOMContentLoaded', () => {
+      loadData();
+      
+      // Date formatting for Singapore Time
+      const now = new Date();
+      const options = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
+      const dateStr = now.toLocaleDateString('en-SG', options);
+      const curDateEl = document.getElementById('currentDateDisplay');
+      if (curDateEl) curDateEl.innerText = dateStr;
+
+      // Show initial views
+      generateRandomSpark();
+      showGradeSyllabus('p3');
+      renderSparksGrid();
+      renderNewHomeSparks();
+      updateUI();
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
