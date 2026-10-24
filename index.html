@@ -2,8 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <title>HarmonyHub | Adeline's Daily Music & Motherhood Sanctuary</title>
+  
+  <!-- Mobile & PWA Meta Tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="HarmonyHub">
+  <meta name="theme-color" content="#f9735b">
+  <meta name="format-detection" content="telephone=no">
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons CDN -->
@@ -62,92 +70,126 @@
   </script>
 
   <style>
-    /* Custom Scrollbars and Print Optimization */
+    /* Mobile-first smoothness & touch improvements */
+    html {
+      -webkit-tap-highlight-color: transparent;
+      scroll-behavior: smooth;
+    }
+    body {
+      touch-action: manipulation;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    /* Prevent annoying iOS Safari zoom on input focus by setting 16px font size on mobile screens */
+    @media (max-width: 768px) {
+      input, select, textarea {
+        font-size: 16px !important;
+      }
+    }
+
+    /* Safe bottom padding for phones with home indicator gestures */
+    .safe-bottom-pad {
+      padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 5.5rem);
+    }
+
+    /* Hide scrollbar for horizontal scrolling tabs while keeping smooth touch scrolling */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
     ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
     }
     ::-webkit-scrollbar-track {
-      background: rgba(0, 0, 0, 0.03);
+      background: rgba(0, 0, 0, 0.02);
     }
     ::-webkit-scrollbar-thumb {
       background: rgba(188, 156, 143, 0.4);
       border-radius: 999px;
     }
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(188, 156, 143, 0.7);
-    }
+    
     @media print {
       .no-print { display: none !important; }
       body { background: white !important; color: black !important; }
       .print-full-width { width: 100% !important; margin: 0 !important; box-shadow: none !important; }
     }
     .solfege-key:active {
-      transform: translateY(2px) scale(0.96);
+      transform: translateY(2px) scale(0.95);
     }
   </style>
 </head>
-<body class="bg-[#faf7f5] text-[#332a26] min-h-screen flex flex-col font-sans antialiased selection:bg-coral-100 selection:text-coral-600">
+<body class="bg-[#faf7f5] text-[#332a26] min-h-screen flex flex-col font-sans antialiased selection:bg-coral-100 selection:text-coral-600 safe-bottom-pad md:pb-8">
 
   <!-- Top Notification / Affirmation Banner -->
-  <div class="bg-gradient-to-r from-coral-500 via-amber-500 to-sage-500 text-white text-xs md:text-sm py-2 px-4 shadow-sm no-print">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <span class="inline-flex items-center justify-center bg-white/20 px-2 py-0.5 rounded text-[11px] font-semibold uppercase tracking-wider">Teacher-Mom Spark</span>
-        <span id="bannerAffirmation" class="truncate font-medium">"Teaching music builds their heart; loving your two little ones anchors their world."</span>
+  <div class="bg-gradient-to-r from-coral-500 via-amber-500 to-sage-500 text-white text-xs md:text-sm py-2 px-3 sm:px-4 shadow-sm no-print">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-2">
+      <div class="flex items-center gap-1.5 sm:gap-2 min-w-0">
+        <span class="inline-flex items-center justify-center bg-white/20 px-2 py-0.5 rounded text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider shrink-0">Teacher-Mom</span>
+        <span id="bannerAffirmation" class="truncate font-medium text-[11px] sm:text-xs">"Teaching music builds their heart; loving your two little ones anchors their world."</span>
       </div>
-      <div class="flex items-center gap-3 shrink-0">
-        <button onclick="playChimeChord()" title="Play Harmony Chime" class="hover:bg-white/20 p-1 rounded-full transition text-white">
+      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <button onclick="playChimeChord()" title="Play Harmony Chime" class="hover:bg-white/20 p-1.5 rounded-full transition text-white active:scale-95">
           <i data-lucide="music" class="w-4 h-4"></i>
         </button>
-        <span id="currentDateDisplay" class="font-mono text-xs opacity-90 hidden sm:inline"></span>
+        <button onclick="openInstallGuideModal()" title="How to Add to Phone Home Screen" class="hover:bg-white/20 px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/15 border border-white/30 hidden xs:inline-flex items-center gap-1">
+          <i data-lucide="smartphone" class="w-3 h-3"></i> <span>HP App</span>
+        </button>
+        <span id="currentDateDisplay" class="font-mono text-xs opacity-90 hidden lg:inline"></span>
       </div>
     </div>
   </div>
 
-  <!-- Header Navigation -->
-  <header class="bg-white/80 backdrop-blur-md border-b border-harmony-200 sticky top-0 z-40 no-print">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-coral-500 to-amber-400 flex items-center justify-center text-white shadow-md shadow-coral-500/20">
+  <!-- Header Navigation (Tablet & Desktop Top Bar, Mobile Compact) -->
+  <header class="bg-white/90 backdrop-blur-md border-b border-harmony-200 sticky top-0 z-40 no-print">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3.5 flex items-center justify-between">
+      <div class="flex items-center gap-2.5 sm:gap-3">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-gradient-to-tr from-coral-500 to-amber-400 flex items-center justify-center text-white shadow-md shadow-coral-500/20 shrink-0">
           <i data-lucide="music-2" class="w-5 h-5"></i>
         </div>
         <div>
-          <div class="flex items-center gap-2">
-            <h1 class="text-xl font-bold font-serif tracking-tight text-harmony-900">HarmonyHub</h1>
-            <span class="bg-sage-100 text-sage-700 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-sage-500/20">SG MOE Edition</span>
+          <div class="flex items-center gap-1.5 sm:gap-2">
+            <h1 class="text-lg sm:text-xl font-bold font-serif tracking-tight text-harmony-900 leading-none">HarmonyHub</h1>
+            <span class="bg-sage-100 text-sage-700 text-[9px] sm:text-[10px] font-semibold px-2 py-0.5 rounded-full border border-sage-500/20">SG MOE</span>
           </div>
-          <p class="text-xs text-harmony-600">Adeline's Daily Music Education & Motherhood Companion</p>
+          <p class="text-[11px] sm:text-xs text-harmony-600 truncate max-w-[200px] sm:max-w-none">Adeline's Music & Motherhood Companion</p>
         </div>
       </div>
 
-      <!-- Navigation Tabs -->
-      <nav class="flex items-center gap-1 sm:gap-2">
+      <!-- Tablet & Desktop Navigation Tabs (Hidden on phone, shown md and up) -->
+      <nav class="hidden md:flex items-center gap-1.5 lg:gap-2">
         <button onclick="switchTab('daily-hub')" id="tab-btn-daily-hub" class="tab-btn px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition bg-coral-500 text-white shadow-sm">
           <i data-lucide="calendar-check" class="w-4 h-4"></i>
-          <span class="hidden md:inline">Today's</span> Focus & Logger
+          <span>Today's Focus</span>
         </button>
         <button onclick="switchTab('moe-curriculum')" id="tab-btn-moe-curriculum" class="tab-btn px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition text-harmony-700 hover:bg-harmony-100">
           <i data-lucide="graduation-cap" class="w-4 h-4"></i>
-          <span class="hidden md:inline">MOE</span> Music Syllabus
+          <span>MOE Syllabus</span>
         </button>
         <button onclick="switchTab('music-sparks')" id="tab-btn-music-sparks" class="tab-btn px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition text-harmony-700 hover:bg-harmony-100">
           <i data-lucide="sparkles" class="w-4 h-4"></i>
-          Teaching Sparks
+          <span>Teaching Sparks</span>
         </button>
         <button onclick="switchTab('two-kids')" id="tab-btn-two-kids" class="tab-btn px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition text-harmony-700 hover:bg-harmony-100">
           <i data-lucide="baby" class="w-4 h-4"></i>
-          My 2 Kids Matters
+          <span>2 Kids Matters</span>
         </button>
       </nav>
 
-      <!-- Quick Action Utilities -->
-      <div class="hidden lg:flex items-center gap-2">
-        <button onclick="openLessonPlanModal()" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-harmony-300 text-harmony-800 hover:bg-harmony-100 flex items-center gap-1.5 transition" title="Draft Lesson Plan">
+      <!-- Right Utility Actions -->
+      <div class="flex items-center gap-1.5">
+        <button onclick="openLessonPlanModal()" class="px-2.5 sm:px-3 py-1.5 text-xs font-semibold rounded-xl border border-harmony-300 text-harmony-800 hover:bg-harmony-100 flex items-center gap-1 transition" title="Draft Lesson Plan">
           <i data-lucide="file-plus-2" class="w-3.5 h-3.5 text-coral-500"></i>
-          Quick Plan
+          <span class="hidden sm:inline">Quick Plan</span>
         </button>
-        <button onclick="printView()" class="p-2 text-harmony-600 hover:text-harmony-900 hover:bg-harmony-100 rounded-lg transition" title="Print Today's Schedule & Notes">
+        <button onclick="openInstallGuideModal()" class="md:hidden p-2 text-harmony-600 hover:text-harmony-900 rounded-xl" title="Install to Phone">
+          <i data-lucide="smartphone" class="w-4 h-4 text-coral-500"></i>
+        </button>
+        <button onclick="printView()" class="hidden sm:block p-2 text-harmony-600 hover:text-harmony-900 hover:bg-harmony-100 rounded-lg transition" title="Print Today's Schedule & Notes">
           <i data-lucide="printer" class="w-4 h-4"></i>
         </button>
       </div>
@@ -155,260 +197,262 @@
   </header>
 
   <!-- Main Content Body -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
 
     <!-- ========================================== -->
     <!-- TAB 1: DAILY FOCUS & LOGGER (Default View) -->
     <!-- ========================================== -->
-    <div id="tab-daily-hub" class="tab-content space-y-6">
+    <div id="tab-daily-hub" class="tab-content space-y-4 sm:space-y-6">
       
-      <!-- Welcome & Quick Sounding Board Header -->
-      <div class="bg-gradient-to-br from-white via-[#fffaf7] to-coral-50/40 rounded-3xl p-6 sm:p-7 border border-harmony-200/80 shadow-sm relative overflow-hidden">
+      <!-- Welcome & Solfège Sounding Board Header -->
+      <div class="bg-gradient-to-br from-white via-[#fffaf7] to-coral-50/40 rounded-3xl p-4 sm:p-7 border border-harmony-200/80 shadow-sm relative overflow-hidden">
         <div class="absolute -right-6 -bottom-6 w-36 h-36 bg-coral-500/5 rounded-full blur-2xl pointer-events-none"></div>
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-6">
           <div class="space-y-1">
             <div class="flex items-center gap-2">
-              <span class="text-xs uppercase tracking-wider font-bold text-coral-600 bg-coral-100 px-2.5 py-0.5 rounded-full">Good Morning, Teacher Adeline!</span>
-              <span id="dayBadge" class="text-xs font-medium text-harmony-600 font-mono">Term Week Focus</span>
+              <span class="text-[10px] sm:text-xs uppercase tracking-wider font-bold text-coral-600 bg-coral-100 px-2.5 py-0.5 rounded-full">Good Morning, Teacher Adeline!</span>
+              <span id="dayBadge" class="text-[10px] sm:text-xs font-medium text-harmony-600 font-mono hidden sm:inline">Term Week Focus</span>
             </div>
-            <h2 class="text-2xl sm:text-3xl font-serif font-bold text-harmony-900">Let's find harmony in classroom & home today.</h2>
-            <p class="text-sm text-harmony-700 max-w-2xl">
+            <h2 class="text-xl sm:text-3xl font-serif font-bold text-harmony-900 leading-snug">Let's find harmony in classroom & home today.</h2>
+            <p class="text-xs sm:text-sm text-harmony-700 max-w-2xl">
               Balance your Singapore MOE Primary 1–6 music lesson preparations alongside your 2 kids' routines and homework.
             </p>
           </div>
 
-          <!-- Solfege Pitch Bell Strip (Interactive Web Audio) -->
-          <div class="bg-white/90 backdrop-blur rounded-2xl p-3 border border-harmony-200 shadow-sm shrink-0">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-[11px] font-bold text-harmony-600 uppercase tracking-wider flex items-center gap-1">
+          <!-- Solfège Pitch Bell Strip (Mobile-responsive mini pocket glockenspiel) -->
+          <div class="bg-white/95 backdrop-blur rounded-2xl p-2.5 sm:p-3 border border-harmony-200 shadow-sm shrink-0 w-full lg:w-auto">
+            <div class="flex items-center justify-between mb-1.5 sm:mb-2">
+              <span class="text-[10px] sm:text-[11px] font-bold text-harmony-600 uppercase tracking-wider flex items-center gap-1">
                 <i data-lucide="bell" class="w-3 h-3 text-music-gold"></i> Solfège Pitch Bells
               </span>
-              <span class="text-[10px] text-harmony-400">Click to sound</span>
+              <span class="text-[9px] sm:text-[10px] text-harmony-400">Tap to sound</span>
             </div>
-            <div class="flex items-center gap-1 sm:gap-1.5">
-              <button onclick="playNote(261.63, 'Do')" class="solfege-key px-2.5 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 font-mono text-xs font-bold transition">Do</button>
-              <button onclick="playNote(293.66, 'Re')" class="solfege-key px-2.5 py-2 rounded-xl bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 font-mono text-xs font-bold transition">Re</button>
-              <button onclick="playNote(329.63, 'Mi')" class="solfege-key px-2.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 font-mono text-xs font-bold transition">Mi</button>
-              <button onclick="playNote(349.23, 'Fa')" class="solfege-key px-2.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 font-mono text-xs font-bold transition">Fa</button>
-              <button onclick="playNote(392.00, 'Sol')" class="solfege-key px-2.5 py-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-700 border border-teal-200 font-mono text-xs font-bold transition">Sol</button>
-              <button onclick="playNote(440.00, 'La')" class="solfege-key px-2.5 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-mono text-xs font-bold transition">La</button>
-              <button onclick="playNote(493.88, 'Ti')" class="solfege-key px-2.5 py-2 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 font-mono text-xs font-bold transition">Ti</button>
-              <button onclick="playNote(523.25, 'Do*')" class="solfege-key px-2.5 py-2 rounded-xl bg-pink-50 hover:bg-pink-100 text-pink-700 border border-pink-200 font-mono text-xs font-bold transition">Do'</button>
+            
+            <!-- Horizontal scrollable keyboard for phones, smooth flex for tablets -->
+            <div class="flex items-center gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+              <button onclick="playNote(261.63, 'Do')" class="solfege-key flex-1 min-w-[36px] sm:min-w-[42px] py-2 sm:py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 font-mono text-xs font-bold transition text-center shadow-xs">Do</button>
+              <button onclick="playNote(293.66, 'Re')" class="solfege-key flex-1 min-w-[36px] sm:min-w-[42px] py-2 sm:py-2.5 rounded-xl bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 font-mono text-xs font-bold transition text-center shadow-xs">Re</button>
+              <button onclick="playNote(329.63, 'Mi')" class="solfege-key flex-1 min-w-[36px] sm:min-w-[42px] py-2 sm:py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 font-mono text-xs font-bold transition text-center shadow-xs">Mi</button>
+              <button onclick="playNote(349.23, 'Fa')" class="solfege-key flex-1 min-w-[36px] sm:min-w-[42px] py-2 sm:py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 font-mono text-xs font-bold transition text-center shadow-xs">Fa</button>
+              <button onclick="playNote(392.00, 'Sol')" class="solfege-key flex-1 min-w-[36px] sm:min-w-[42px] py-2 sm:py-2.5 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-700 border border-teal-200 font-mono text-xs font-bold transition text-center shadow-xs">Sol</button>
+              <button onclick="playNote(440.00, 'La')" class="solfege-key flex-1 min-w-[36px] sm:min-w-[42px] py-2 sm:py-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-mono text-xs font-bold transition text-center shadow-xs">La</button>
+              <button onclick="playNote(493.88, 'Ti')" class="solfege-key flex-1 min-w-[36px] sm:min-w-[42px] py-2 sm:py-2.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 font-mono text-xs font-bold transition text-center shadow-xs">Ti</button>
+              <button onclick="playNote(523.25, 'Do*')" class="solfege-key flex-1 min-w-[36px] sm:min-w-[42px] py-2 sm:py-2.5 rounded-xl bg-pink-50 hover:bg-pink-100 text-pink-700 border border-pink-200 font-mono text-xs font-bold transition text-center shadow-xs">Do'</button>
             </div>
           </div>
         </div>
 
         <!-- Today's Quick Summary Metrics -->
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-5 border-t border-harmony-200/60">
-          <div class="bg-white/80 rounded-xl p-3 border border-harmony-200">
-            <span class="text-[11px] font-semibold text-harmony-600 block">Classroom Tasks</span>
-            <div class="flex items-baseline gap-1 mt-1">
-              <span id="statSchoolPending" class="text-xl font-bold text-coral-600 font-mono">0</span>
-              <span class="text-xs text-harmony-500">remaining</span>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 mt-4 sm:mt-6 pt-4 sm:pt-5 border-t border-harmony-200/60">
+          <div class="bg-white/80 rounded-xl p-2.5 sm:p-3 border border-harmony-200">
+            <span class="text-[10px] sm:text-[11px] font-semibold text-harmony-600 block">Classroom Tasks</span>
+            <div class="flex items-baseline gap-1 mt-0.5 sm:mt-1">
+              <span id="statSchoolPending" class="text-lg sm:text-xl font-bold text-coral-600 font-mono">0</span>
+              <span class="text-[10px] sm:text-xs text-harmony-500">remaining</span>
             </div>
           </div>
-          <div class="bg-white/80 rounded-xl p-3 border border-harmony-200">
-            <span class="text-[11px] font-semibold text-harmony-600 block">Kids & Home Items</span>
-            <div class="flex items-baseline gap-1 mt-1">
-              <span id="statHomePending" class="text-xl font-bold text-sage-600 font-mono">0</span>
-              <span class="text-xs text-harmony-500">remaining</span>
+          <div class="bg-white/80 rounded-xl p-2.5 sm:p-3 border border-harmony-200">
+            <span class="text-[10px] sm:text-[11px] font-semibold text-harmony-600 block">Kids & Home Items</span>
+            <div class="flex items-baseline gap-1 mt-0.5 sm:mt-1">
+              <span id="statHomePending" class="text-lg sm:text-xl font-bold text-sage-600 font-mono">0</span>
+              <span class="text-[10px] sm:text-xs text-harmony-500">remaining</span>
             </div>
           </div>
-          <div class="bg-white/80 rounded-xl p-3 border border-harmony-200">
-            <span class="text-[11px] font-semibold text-harmony-600 block">Today's Tempo</span>
-            <div class="flex items-center gap-1.5 mt-1">
-              <select id="tempoMoodSelect" onchange="updateTempoMood()" class="text-xs font-bold text-harmony-800 bg-transparent border-0 focus:ring-0 p-0 cursor-pointer">
-                <option value="Andante">Andante (Walking Pace 🚶‍♀️)</option>
-                <option value="Moderato" selected>Moderato (Balanced ⚖️)</option>
-                <option value="Allegro">Allegro (Brisk & Lively ⚡)</option>
-                <option value="Largo">Largo (Gentle & Slow 🌿)</option>
-                <option value="Vivace">Vivace (Vibrant Energy 🌟)</option>
+          <div class="bg-white/80 rounded-xl p-2.5 sm:p-3 border border-harmony-200">
+            <span class="text-[10px] sm:text-[11px] font-semibold text-harmony-600 block">Today's Tempo</span>
+            <div class="flex items-center gap-1.5 mt-0.5 sm:mt-1">
+              <select id="tempoMoodSelect" onchange="updateTempoMood()" class="text-xs font-bold text-harmony-800 bg-transparent border-0 focus:ring-0 p-0 cursor-pointer w-full">
+                <option value="Andante">Andante 🚶‍♀️</option>
+                <option value="Moderato" selected>Moderato ⚖️</option>
+                <option value="Allegro">Allegro ⚡</option>
+                <option value="Largo">Largo 🌿</option>
+                <option value="Vivace">Vivace 🌟</option>
               </select>
             </div>
           </div>
-          <div class="bg-white/80 rounded-xl p-3 border border-harmony-200">
-            <span class="text-[11px] font-semibold text-harmony-600 block">Daily Progress</span>
-            <div class="w-full bg-harmony-100 rounded-full h-2 mt-2.5 overflow-hidden">
+          <div class="bg-white/80 rounded-xl p-2.5 sm:p-3 border border-harmony-200">
+            <span class="text-[10px] sm:text-[11px] font-semibold text-harmony-600 block">Daily Progress</span>
+            <div class="w-full bg-harmony-100 rounded-full h-2 mt-2 overflow-hidden">
               <div id="taskProgressBar" class="bg-gradient-to-r from-coral-500 to-sage-500 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
             </div>
-            <div class="text-[10px] text-right text-harmony-500 mt-1 font-mono" id="taskProgressPercent">0% Done</div>
+            <div class="text-[9px] sm:text-[10px] text-right text-harmony-500 mt-1 font-mono" id="taskProgressPercent">0% Done</div>
           </div>
         </div>
       </div>
 
-      <!-- Main Logger Layout: 2 Columns -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- Main Logger Layout: Responsive 1 Col on HP, 2 Cols on Tablets & Desktops -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
 
         <!-- Left Column: Unified Task Logger & Schedule (7 cols) -->
-        <div class="lg:col-span-7 space-y-5">
+        <div class="lg:col-span-7 space-y-4 sm:space-y-5">
 
           <!-- Task Logger Card -->
-          <div class="bg-white rounded-3xl p-5 sm:p-6 border border-harmony-200 shadow-sm space-y-4">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-harmony-100">
+          <div class="bg-white rounded-3xl p-4 sm:p-6 border border-harmony-200 shadow-sm space-y-3 sm:space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2.5 sm:pb-3 border-b border-harmony-100">
               <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-xl bg-coral-100 text-coral-600 flex items-center justify-center font-bold">
+                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-coral-100 text-coral-600 flex items-center justify-center font-bold">
                   <i data-lucide="check-square" class="w-4 h-4"></i>
                 </div>
                 <div>
-                  <h3 class="font-bold text-harmony-900 text-base">Daily Task Logger</h3>
-                  <p class="text-xs text-harmony-500">Track MOE Music prep, lessons, and your 2 kids' schedules</p>
+                  <h3 class="font-bold text-harmony-900 text-sm sm:text-base">Daily Task Logger</h3>
+                  <p class="text-[11px] sm:text-xs text-harmony-500">MOE Music prep & 2 kids matters</p>
                 </div>
               </div>
 
-              <!-- Filter Pills -->
-              <div class="flex items-center gap-1 bg-harmony-100 p-1 rounded-xl text-xs font-semibold">
-                <button onclick="setTaskFilter('all')" id="filter-all" class="task-filter-btn px-2.5 py-1 rounded-lg bg-white text-harmony-900 shadow-xs">All</button>
-                <button onclick="setTaskFilter('school')" id="filter-school" class="task-filter-btn px-2.5 py-1 rounded-lg text-harmony-600 hover:text-harmony-900">🏫 MOE Music</button>
-                <button onclick="setTaskFilter('home')" id="filter-home" class="task-filter-btn px-2.5 py-1 rounded-lg text-harmony-600 hover:text-harmony-900">🏡 2 Kids</button>
-                <button onclick="setTaskFilter('self')" id="filter-self" class="task-filter-btn px-2.5 py-1 rounded-lg text-harmony-600 hover:text-harmony-900">✨ Me-Time</button>
+              <!-- Filter Pills (Touch friendly scroll on mobile) -->
+              <div class="flex items-center gap-1 bg-harmony-100 p-1 rounded-xl text-xs font-semibold overflow-x-auto no-scrollbar">
+                <button onclick="setTaskFilter('all')" id="filter-all" class="task-filter-btn px-2.5 py-1 rounded-lg bg-white text-harmony-900 shadow-xs whitespace-nowrap">All</button>
+                <button onclick="setTaskFilter('school')" id="filter-school" class="task-filter-btn px-2.5 py-1 rounded-lg text-harmony-600 hover:text-harmony-900 whitespace-nowrap">🏫 MOE</button>
+                <button onclick="setTaskFilter('home')" id="filter-home" class="task-filter-btn px-2.5 py-1 rounded-lg text-harmony-600 hover:text-harmony-900 whitespace-nowrap">🏡 2 Kids</button>
+                <button onclick="setTaskFilter('self')" id="filter-self" class="task-filter-btn px-2.5 py-1 rounded-lg text-harmony-600 hover:text-harmony-900 whitespace-nowrap">✨ Me-Time</button>
               </div>
             </div>
 
-            <!-- Add Task Input Form -->
-            <form onsubmit="handleAddTask(event)" class="space-y-3 bg-[#faf7f5] p-3.5 rounded-2xl border border-harmony-200/80">
+            <!-- Add Task Input Form (Optimized for Mobile Keyboards) -->
+            <form onsubmit="handleAddTask(event)" class="space-y-2.5 sm:space-y-3 bg-[#faf7f5] p-3 sm:p-3.5 rounded-2xl border border-harmony-200/80">
               <div class="flex items-center gap-2">
-                <input type="text" id="newTaskTitle" required placeholder="What needs attention today? (e.g. Set up P3 recorder sheet / Sign Kid 1 spelling book)" 
-                  class="flex-1 bg-white border border-harmony-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-coral-500/20 focus:border-coral-500 placeholder-harmony-400">
-                <button type="submit" class="bg-coral-500 hover:bg-coral-600 text-white px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-1.5 transition shadow-sm shrink-0">
-                  <i data-lucide="plus" class="w-4 h-4"></i> Add
+                <input type="text" id="newTaskTitle" required placeholder="What needs attention today? (e.g. Set up P3 recorder sheet / Sign spelling book)" 
+                  class="flex-1 bg-white border border-harmony-200 rounded-xl px-3 sm:px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-coral-500/20 focus:border-coral-500 placeholder-harmony-400">
+                <button type="submit" class="bg-coral-500 hover:bg-coral-600 text-white px-3 sm:px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm flex items-center gap-1 transition shadow-sm shrink-0 active:scale-95">
+                  <i data-lucide="plus" class="w-4 h-4"></i> <span class="hidden sm:inline">Add</span>
                 </button>
               </div>
               
-              <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
-                <div class="flex flex-wrap items-center gap-2">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                <div class="grid grid-cols-3 sm:flex sm:flex-wrap items-center gap-1.5 sm:gap-2">
                   <!-- Category Select -->
-                  <select id="newTaskCategory" class="bg-white border border-harmony-200 rounded-lg px-2.5 py-1 text-xs text-harmony-700 font-medium focus:outline-none">
-                    <option value="school">🏫 MOE Music Class</option>
-                    <option value="home">🏡 2 Kids & Home</option>
-                    <option value="self">✨ Teacher-Mom Me-Time</option>
+                  <select id="newTaskCategory" class="bg-white border border-harmony-200 rounded-lg px-2 py-1.5 sm:py-1 text-xs text-harmony-700 font-medium focus:outline-none">
+                    <option value="school">🏫 MOE Music</option>
+                    <option value="home">🏡 2 Kids</option>
+                    <option value="self">✨ Me-Time</option>
                   </select>
 
                   <!-- Time Block / Period -->
-                  <select id="newTaskSlot" class="bg-white border border-harmony-200 rounded-lg px-2.5 py-1 text-xs text-harmony-700 font-medium focus:outline-none">
-                    <option value="morning">🌅 Morning Rush (6:30 - 7:30 AM)</option>
-                    <option value="school-am">🎵 Periods 1-4 (Morning Teaching)</option>
-                    <option value="school-pm">🎹 Periods 5-8 (Afternoon / Recess)</option>
-                    <option value="cca-prep">📋 1:30 - 4:00 PM (Prep / CCA)</option>
-                    <option value="kid-transit">🎒 5:00 - 7:00 PM (Kid Pickup & Dinner)</option>
-                    <option value="night">🌙 8:00 - 9:30 PM (Homework & Bedtime)</option>
+                  <select id="newTaskSlot" class="bg-white border border-harmony-200 rounded-lg px-2 py-1.5 sm:py-1 text-xs text-harmony-700 font-medium focus:outline-none">
+                    <option value="morning">🌅 Morning</option>
+                    <option value="school-am">🎵 Morning P1-4</option>
+                    <option value="school-pm">🎹 Afternoon P5-8</option>
+                    <option value="cca-prep">📋 Prep & CCA</option>
+                    <option value="kid-transit">🎒 Kid Transit</option>
+                    <option value="night">🌙 Bedtime</option>
                   </select>
 
                   <!-- Priority Tag -->
-                  <select id="newTaskPriority" class="bg-white border border-harmony-200 rounded-lg px-2.5 py-1 text-xs text-harmony-700 font-medium focus:outline-none">
-                    <option value="urgent">🔴 Urgent Deadline</option>
-                    <option value="normal" selected>🟡 Normal Flow</option>
-                    <option value="low">🟢 Nice-to-have</option>
+                  <select id="newTaskPriority" class="bg-white border border-harmony-200 rounded-lg px-2 py-1.5 sm:py-1 text-xs text-harmony-700 font-medium focus:outline-none">
+                    <option value="urgent">🔴 Urgent</option>
+                    <option value="normal" selected>🟡 Normal</option>
+                    <option value="low">🟢 Low</option>
                   </select>
                 </div>
 
-                <!-- Quick Preset Prompts -->
-                <div class="flex items-center gap-1">
-                  <span class="text-[11px] text-harmony-500">Quick:</span>
-                  <button type="button" onclick="fillTaskPreset('Prep P4 Recorder fingering cards', 'school', 'school-am', 'urgent')" class="text-[11px] bg-white border border-harmony-200 px-2 py-0.5 rounded text-harmony-700 hover:bg-harmony-50">Recorder</button>
-                  <button type="button" onclick="fillTaskPreset('Check Kid 1 & Kid 2 spelling/Ting Xie', 'home', 'night', 'urgent')" class="text-[11px] bg-white border border-harmony-200 px-2 py-0.5 rounded text-harmony-700 hover:bg-harmony-50">Spelling</button>
-                  <button type="button" onclick="fillTaskPreset('Tune 10 Ukuleles in Music Room 2', 'school', 'cca-prep', 'normal')" class="text-[11px] bg-white border border-harmony-200 px-2 py-0.5 rounded text-harmony-700 hover:bg-harmony-50">Ukulele</button>
+                <!-- Quick Preset Prompts (Touch-friendly horizontal scroll) -->
+                <div class="flex items-center gap-1 overflow-x-auto no-scrollbar pt-1 sm:pt-0">
+                  <span class="text-[10px] text-harmony-400 shrink-0">Quick:</span>
+                  <button type="button" onclick="fillTaskPreset('Prep P4 Recorder fingering cards', 'school', 'school-am', 'urgent')" class="text-[11px] bg-white border border-harmony-200 px-2 py-0.5 rounded text-harmony-700 hover:bg-harmony-50 whitespace-nowrap">Recorder</button>
+                  <button type="button" onclick="fillTaskPreset('Check Kid 1 & Kid 2 spelling/Ting Xie', 'home', 'night', 'urgent')" class="text-[11px] bg-white border border-harmony-200 px-2 py-0.5 rounded text-harmony-700 hover:bg-harmony-50 whitespace-nowrap">Spelling</button>
+                  <button type="button" onclick="fillTaskPreset('Tune 10 Ukuleles in Music Room 2', 'school', 'cca-prep', 'normal')" class="text-[11px] bg-white border border-harmony-200 px-2 py-0.5 rounded text-harmony-700 hover:bg-harmony-50 whitespace-nowrap">Ukulele</button>
                 </div>
               </div>
             </form>
 
             <!-- Tasks List Container -->
-            <div id="taskList" class="space-y-2.5 max-h-[460px] overflow-y-auto pr-1">
+            <div id="taskList" class="space-y-2 max-h-[460px] overflow-y-auto pr-0.5">
               <!-- Dynamically populated via JS -->
             </div>
             
-            <div class="flex items-center justify-between pt-2 text-xs text-harmony-500 border-t border-harmony-100">
-              <span id="taskCountSummary">Showing all tasks</span>
-              <button onclick="clearCompletedTasks()" class="hover:text-coral-600 transition">Clear completed</button>
+            <div class="flex items-center justify-between pt-2 text-[11px] sm:text-xs text-harmony-500 border-t border-harmony-100">
+              <span id="taskCountSummary">Showing tasks</span>
+              <button onclick="clearCompletedTasks()" class="hover:text-coral-600 transition p-1">Clear done</button>
             </div>
           </div>
 
           <!-- Time-Blocked Day Timeline Overview -->
-          <div class="bg-white rounded-3xl p-5 sm:p-6 border border-harmony-200 shadow-sm space-y-3">
+          <div class="bg-white rounded-3xl p-4 sm:p-6 border border-harmony-200 shadow-sm space-y-3">
             <div class="flex items-center justify-between">
-              <h3 class="font-bold text-harmony-900 text-sm flex items-center gap-2">
+              <h3 class="font-bold text-harmony-900 text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                 <i data-lucide="clock" class="w-4 h-4 text-coral-500"></i> Adeline's Daily Rhythm Schedule
               </h3>
-              <span class="text-xs text-harmony-500">Balanced flow for school & kids</span>
+              <span class="text-[10px] sm:text-xs text-harmony-500">School & kids flow</span>
             </div>
             
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-              <div class="p-3 bg-coral-50/50 rounded-xl border border-coral-200/50">
-                <span class="font-bold text-coral-800 block mb-1">🌅 06:30 - 07:30 • Morning Launch</span>
-                <p class="text-harmony-700">Kid breakfast, water bottles, pack school bags, calm departure.</p>
+              <div class="p-2.5 sm:p-3 bg-coral-50/50 rounded-xl border border-coral-200/50">
+                <span class="font-bold text-coral-800 block mb-0.5">🌅 06:30 - 07:30 • Morning Launch</span>
+                <p class="text-harmony-700 text-[11px]">Kid breakfast, water bottles, pack school bags, calm departure.</p>
               </div>
-              <div class="p-3 bg-amber-50/50 rounded-xl border border-amber-200/50">
-                <span class="font-bold text-amber-800 block mb-1">🎵 07:45 - 13:30 • MOE Classroom Magic</span>
-                <p class="text-harmony-700">P1-P6 lessons, active singing, recorder/ukulele practicals, recess duty.</p>
+              <div class="p-2.5 sm:p-3 bg-amber-50/50 rounded-xl border border-amber-200/50">
+                <span class="font-bold text-amber-800 block mb-0.5">🎵 07:45 - 13:30 • MOE Classroom Magic</span>
+                <p class="text-harmony-700 text-[11px]">P1-P6 lessons, active singing, recorder/ukulele practicals, recess duty.</p>
               </div>
-              <div class="p-3 bg-sage-50/50 rounded-xl border border-sage-200/50">
-                <span class="font-bold text-sage-800 block mb-1">📋 13:30 - 16:30 • Department & CCA</span>
-                <p class="text-harmony-700">Choir/Band CCA, mark reflection sheets, prep instruments for tomorrow.</p>
+              <div class="p-2.5 sm:p-3 bg-sage-50/50 rounded-xl border border-sage-200/50">
+                <span class="font-bold text-sage-800 block mb-0.5">📋 13:30 - 16:30 • Department & CCA</span>
+                <p class="text-harmony-700 text-[11px]">Choir/Band CCA, mark reflection sheets, prep instruments for tomorrow.</p>
               </div>
-              <div class="p-3 bg-purple-50/50 rounded-xl border border-purple-200/50">
-                <span class="font-bold text-purple-800 block mb-1">🌙 17:30 - 21:00 • Family & Bedtime</span>
-                <p class="text-harmony-700">Kid homework check, warm dinner, 15-min music play, lullaby wind-down.</p>
+              <div class="p-2.5 sm:p-3 bg-purple-50/50 rounded-xl border border-purple-200/50">
+                <span class="font-bold text-purple-800 block mb-0.5">🌙 17:30 - 21:00 • Family & Bedtime</span>
+                <p class="text-harmony-700 text-[11px]">Kid homework check, warm dinner, 15-min music play, lullaby wind-down.</p>
               </div>
             </div>
           </div>
         </div>
 
         <!-- Right Column: Today's Teaching Spark + Kids Quick Matter + Gratitude (5 cols) -->
-        <div class="lg:col-span-5 space-y-5">
+        <div class="lg:col-span-5 space-y-4 sm:space-y-5">
 
           <!-- Featured Daily Music Inspiration Widget -->
-          <div class="bg-gradient-to-br from-[#fff7ed] via-white to-[#fef2f2] rounded-3xl p-5 sm:p-6 border border-amber-200/70 shadow-sm relative space-y-4">
+          <div class="bg-gradient-to-br from-[#fff7ed] via-white to-[#fef2f2] rounded-3xl p-4 sm:p-6 border border-amber-200/70 shadow-sm relative space-y-3 sm:space-y-4">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <span class="p-2 rounded-xl bg-amber-100 text-amber-700">
+                <span class="p-1.5 sm:p-2 rounded-xl bg-amber-100 text-amber-700">
                   <i data-lucide="flame" class="w-4 h-4"></i>
                 </span>
                 <div>
-                  <h3 class="font-bold text-harmony-900 text-sm">Today's MOE Teaching Spark</h3>
-                  <span id="sparkLevelTag" class="text-[11px] font-semibold text-amber-700 uppercase">Primary 3-4 Focus</span>
+                  <h3 class="font-bold text-harmony-900 text-xs sm:text-sm">Today's MOE Teaching Spark</h3>
+                  <span id="sparkLevelTag" class="text-[10px] sm:text-[11px] font-semibold text-amber-700 uppercase">Primary 3-4 Focus</span>
                 </div>
               </div>
-              <button onclick="generateRandomSpark()" class="p-2 text-amber-700 hover:bg-amber-100 rounded-xl transition flex items-center gap-1 text-xs font-semibold" title="Roll New Spark">
-                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Spin
+              <button onclick="generateRandomSpark()" class="p-2 text-amber-700 hover:bg-amber-100 rounded-xl transition flex items-center gap-1 text-xs font-semibold active:scale-95" title="Roll New Spark">
+                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> <span>Spin</span>
               </button>
             </div>
 
             <!-- Spark Content Body -->
-            <div id="dailySparkCard" class="bg-white/90 rounded-2xl p-4 border border-amber-200/50 space-y-2.5">
-              <div class="flex items-center justify-between">
-                <h4 id="sparkTitle" class="font-bold text-harmony-900 text-sm">The "Beat Detective" Rhythm Hunt</h4>
-                <span id="sparkDomain" class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-full">Listening & Rhythms</span>
+            <div id="dailySparkCard" class="bg-white/95 rounded-2xl p-3.5 sm:p-4 border border-amber-200/50 space-y-2">
+              <div class="flex items-center justify-between gap-1">
+                <h4 id="sparkTitle" class="font-bold text-harmony-900 text-xs sm:text-sm leading-snug">The "Beat Detective" Rhythm Hunt</h4>
+                <span id="sparkDomain" class="bg-amber-100 text-amber-800 text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">Rhythms</span>
               </div>
               <p id="sparkDescription" class="text-xs text-harmony-700 leading-relaxed">
                 One student plays the "Detective" outside. Class chooses a secret rhythmic leader who silently changes body percussion (clap, snap, chest pat, stomp). Detective returns and has 3 guesses to spot the leader!
               </p>
               <div class="pt-2 border-t border-harmony-100 flex items-center justify-between text-[11px]">
-                <span class="text-harmony-500 flex items-center gap-1">
+                <span class="text-harmony-500 flex items-center gap-1 text-[10px] sm:text-xs">
                   <i data-lucide="timer" class="w-3 h-3"></i> <span id="sparkDuration">7-10 mins (Warmup)</span>
                 </span>
-                <button onclick="addSparkToTodayPlan()" class="text-coral-600 font-semibold hover:underline flex items-center gap-1">
-                  <i data-lucide="bookmark-plus" class="w-3.5 h-3.5"></i> Save to Lesson Plan
+                <button onclick="addSparkToTodayPlan()" class="text-coral-600 font-semibold hover:underline flex items-center gap-1 text-[11px]">
+                  <i data-lucide="bookmark-plus" class="w-3.5 h-3.5"></i> Save to Plan
                 </button>
               </div>
             </div>
 
             <!-- Direct link to full syllabus -->
             <div class="text-center">
-              <button onclick="switchTab('music-sparks')" class="text-xs font-semibold text-amber-800 hover:text-amber-950 underline flex items-center justify-center gap-1 mx-auto">
-                Explore 50+ MOE Teaching Activities by Grade Level &rarr;
+              <button onclick="switchTab('music-sparks')" class="text-xs font-semibold text-amber-800 hover:text-amber-950 underline flex items-center justify-center gap-1 mx-auto py-1">
+                Explore 50+ MOE Teaching Activities &rarr;
               </button>
             </div>
           </div>
 
           <!-- 2 Kids Matters Spotlight Card -->
-          <div class="bg-white rounded-3xl p-5 sm:p-6 border border-harmony-200 shadow-sm space-y-4">
+          <div class="bg-white rounded-3xl p-4 sm:p-6 border border-harmony-200 shadow-sm space-y-3 sm:space-y-4">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <span class="p-2 rounded-xl bg-sage-100 text-sage-700">
+                <span class="p-1.5 sm:p-2 rounded-xl bg-sage-100 text-sage-700">
                   <i data-lucide="heart" class="w-4 h-4"></i>
                 </span>
                 <div>
-                  <h3 class="font-bold text-harmony-900 text-sm">Mom of 2 Daily Snapshot</h3>
-                  <p class="text-xs text-harmony-500">School & wellbeing checklist for both kids</p>
+                  <h3 class="font-bold text-harmony-900 text-xs sm:text-sm">Mom of 2 Daily Snapshot</h3>
+                  <p class="text-[11px] sm:text-xs text-harmony-500">School & wellbeing checklist</p>
                 </div>
               </div>
               <button onclick="switchTab('two-kids')" class="text-xs font-semibold text-sage-700 hover:underline">
@@ -417,44 +461,44 @@
             </div>
 
             <!-- Mini Kid Tabs -->
-            <div class="grid grid-cols-2 gap-2 text-xs">
-              <div class="bg-sage-50/70 p-3 rounded-2xl border border-sage-200/60 space-y-2">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+              <div class="bg-sage-50/70 p-2.5 sm:p-3 rounded-2xl border border-sage-200/60 space-y-2">
                 <div class="flex items-center justify-between">
                   <span class="font-bold text-sage-900" id="kid1NameDisplay">Child 1 (Primary)</span>
-                  <span class="text-[10px] bg-sage-200 text-sage-800 px-1.5 py-0.5 rounded font-mono">P3</span>
+                  <span class="text-[9px] bg-sage-200 text-sage-800 px-1.5 py-0.5 rounded font-mono">P3</span>
                 </div>
                 <div class="space-y-1.5">
                   <label class="flex items-center gap-2 text-[11px] text-harmony-700 cursor-pointer">
-                    <input type="checkbox" onchange="toggleKidItem('k1_homework')" id="k1_homework" class="rounded text-sage-600 focus:ring-0 w-3.5 h-3.5">
+                    <input type="checkbox" onchange="toggleKidItem('k1_homework')" id="k1_homework" class="rounded text-sage-600 focus:ring-0 w-4 h-4">
                     <span>Homework / Ting Xie check</span>
                   </label>
                   <label class="flex items-center gap-2 text-[11px] text-harmony-700 cursor-pointer">
-                    <input type="checkbox" onchange="toggleKidItem('k1_bag')" id="k1_bag" class="rounded text-sage-600 focus:ring-0 w-3.5 h-3.5">
+                    <input type="checkbox" onchange="toggleKidItem('k1_bag')" id="k1_bag" class="rounded text-sage-600 focus:ring-0 w-4 h-4">
                     <span>Pack bag & art/music items</span>
                   </label>
                   <label class="flex items-center gap-2 text-[11px] text-harmony-700 cursor-pointer">
-                    <input type="checkbox" onchange="toggleKidItem('k1_read')" id="k1_read" class="rounded text-sage-600 focus:ring-0 w-3.5 h-3.5">
+                    <input type="checkbox" onchange="toggleKidItem('k1_read')" id="k1_read" class="rounded text-sage-600 focus:ring-0 w-4 h-4">
                     <span>20-min reading before sleep</span>
                   </label>
                 </div>
               </div>
 
-              <div class="bg-coral-50/70 p-3 rounded-2xl border border-coral-200/60 space-y-2">
+              <div class="bg-coral-50/70 p-2.5 sm:p-3 rounded-2xl border border-coral-200/60 space-y-2">
                 <div class="flex items-center justify-between">
                   <span class="font-bold text-coral-900" id="kid2NameDisplay">Child 2 (Junior)</span>
-                  <span class="text-[10px] bg-coral-200 text-coral-800 px-1.5 py-0.5 rounded font-mono">P1</span>
+                  <span class="text-[9px] bg-coral-200 text-coral-800 px-1.5 py-0.5 rounded font-mono">P1</span>
                 </div>
                 <div class="space-y-1.5">
                   <label class="flex items-center gap-2 text-[11px] text-harmony-700 cursor-pointer">
-                    <input type="checkbox" onchange="toggleKidItem('k2_water')" id="k2_water" class="rounded text-coral-600 focus:ring-0 w-3.5 h-3.5">
+                    <input type="checkbox" onchange="toggleKidItem('k2_water')" id="k2_water" class="rounded text-coral-600 focus:ring-0 w-4 h-4">
                     <span>Refill school water bottle</span>
                   </label>
                   <label class="flex items-center gap-2 text-[11px] text-harmony-700 cursor-pointer">
-                    <input type="checkbox" onchange="toggleKidItem('k2_spelling')" id="k2_spelling" class="rounded text-coral-600 focus:ring-0 w-3.5 h-3.5">
+                    <input type="checkbox" onchange="toggleKidItem('k2_spelling')" id="k2_spelling" class="rounded text-coral-600 focus:ring-0 w-4 h-4">
                     <span>English spelling word drill</span>
                   </label>
                   <label class="flex items-center gap-2 text-[11px] text-harmony-700 cursor-pointer">
-                    <input type="checkbox" onchange="toggleKidItem('k2_hug')" id="k2_hug" class="rounded text-coral-600 focus:ring-0 w-3.5 h-3.5">
+                    <input type="checkbox" onchange="toggleKidItem('k2_hug')" id="k2_hug" class="rounded text-coral-600 focus:ring-0 w-4 h-4">
                     <span>10-min bedtime cuddle & chat</span>
                   </label>
                 </div>
@@ -462,34 +506,34 @@
             </div>
 
             <!-- Today's Home Play Idea -->
-            <div class="p-3 bg-harmony-50 rounded-xl border border-harmony-200/60 flex items-start gap-2.5">
-              <span class="text-lg">🧸</span>
+            <div class="p-2.5 sm:p-3 bg-harmony-50 rounded-xl border border-harmony-200/60 flex items-start gap-2">
+              <span class="text-base sm:text-lg">🧸</span>
               <div>
-                <span class="text-[11px] font-bold text-harmony-800 block">Tonight's 10-Min Connection Spark:</span>
-                <p class="text-xs text-harmony-600" id="homeSparkText">
-                  "Musical Freeze Dining": Put on some lively Grieg or Mozart during dinner cleanup; freeze in dramatic poses whenever mum hits pause!
+                <span class="text-[10px] sm:text-[11px] font-bold text-harmony-800 block">Tonight's 10-Min Connection Spark:</span>
+                <p class="text-[11px] sm:text-xs text-harmony-600 leading-snug" id="homeSparkText">
+                  "Musical Freeze Dining": Put on lively Mozart during dinner cleanup; freeze in dramatic poses whenever mum hits pause!
                 </p>
               </div>
             </div>
           </div>
 
           <!-- Teacher-Mom Reflection & Gratitude Log -->
-          <div class="bg-white rounded-3xl p-5 sm:p-6 border border-harmony-200 shadow-sm space-y-3">
+          <div class="bg-white rounded-3xl p-4 sm:p-6 border border-harmony-200 shadow-sm space-y-2.5 sm:space-y-3">
             <div class="flex items-center justify-between">
-              <h3 class="font-bold text-harmony-900 text-sm flex items-center gap-2">
+              <h3 class="font-bold text-harmony-900 text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2">
                 <i data-lucide="feather" class="w-4 h-4 text-coral-500"></i> Teacher-Mom Mindful Reflection
               </h3>
-              <span class="text-[11px] text-harmony-400">Autosaved</span>
+              <span class="text-[10px] text-harmony-400">Autosaved</span>
             </div>
             
             <div class="space-y-2">
               <div>
-                <label class="text-[11px] font-semibold text-harmony-600 block mb-1">One Small Win in School or at Home Today:</label>
-                <input type="text" id="dailyWinInput" onchange="saveReflection()" placeholder="e.g. P2 class finally mastered Sol-Mi, or kids ate all their veggies!" 
+                <label class="text-[10px] sm:text-[11px] font-semibold text-harmony-600 block mb-0.5">One Small Win in School or at Home Today:</label>
+                <input type="text" id="dailyWinInput" onchange="saveReflection()" placeholder="e.g. P2 class mastered Sol-Mi, or kids ate all their veggies!" 
                   class="w-full bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-coral-500 focus:border-coral-500">
               </div>
               <div>
-                <label class="text-[11px] font-semibold text-harmony-600 block mb-1">Kid Quote or Funny Classroom Moment:</label>
+                <label class="text-[10px] sm:text-[11px] font-semibold text-harmony-600 block mb-0.5">Kid Quote or Funny Classroom Moment:</label>
                 <input type="text" id="dailyFunnyInput" onchange="saveReflection()" placeholder="e.g. Student called the triangle instrument a 'pizza slice'!" 
                   class="w-full bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-coral-500 focus:border-coral-500">
               </div>
@@ -505,58 +549,58 @@
     <!-- ========================================== -->
     <!-- TAB 2: SINGAPORE MOE MUSIC SYLLABUS MATRIX -->
     <!-- ========================================== -->
-    <div id="tab-moe-curriculum" class="tab-content hidden space-y-6">
+    <div id="tab-moe-curriculum" class="tab-content hidden space-y-4 sm:space-y-6">
       
       <!-- Syllabus Header & Overview -->
-      <div class="bg-white rounded-3xl p-6 sm:p-7 border border-harmony-200 shadow-sm">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-harmony-100">
+      <div class="bg-white rounded-3xl p-4 sm:p-7 border border-harmony-200 shadow-sm space-y-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 sm:pb-5 border-b border-harmony-100">
           <div>
             <div class="flex items-center gap-2">
-              <span class="bg-coral-100 text-coral-700 text-xs font-bold px-2.5 py-0.5 rounded-full">Primary 1 to Primary 6</span>
-              <span class="text-xs text-harmony-500">Singapore Ministry of Education (MOE) Framework</span>
+              <span class="bg-coral-100 text-coral-700 text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full">Primary 1 to Primary 6</span>
+              <span class="text-[10px] sm:text-xs text-harmony-500">Singapore MOE Framework</span>
             </div>
-            <h2 class="text-2xl font-serif font-bold text-harmony-900 mt-1">Primary Music Curriculum Matrix</h2>
-            <p class="text-sm text-harmony-600 max-w-3xl mt-1">
-              Aligned with MOE 3 Core Learning Dimensions: <strong>1. Perform</strong> (Singing & Instruments), <strong>2. Create</strong> (Improvising & Arranging), and <strong>3. Listen & Respond</strong> (Aesthetic appreciation & Cultural heritage).
+            <h2 class="text-xl sm:text-2xl font-serif font-bold text-harmony-900 mt-1">Primary Music Curriculum Matrix</h2>
+            <p class="text-xs sm:text-sm text-harmony-600 max-w-3xl mt-0.5">
+              Aligned with MOE 3 Core Learning Dimensions: <strong>1. Perform</strong>, <strong>2. Create</strong>, and <strong>3. Listen & Respond</strong>.
             </p>
           </div>
-          <button onclick="openLessonPlanModal()" class="bg-coral-500 hover:bg-coral-600 text-white font-semibold text-xs sm:text-sm px-4 py-2.5 rounded-xl flex items-center gap-2 shadow-sm transition shrink-0">
-            <i data-lucide="file-text" class="w-4 h-4"></i> Draft New Lesson Plan
+          <button onclick="openLessonPlanModal()" class="bg-coral-500 hover:bg-coral-600 text-white font-semibold text-xs sm:text-sm px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-sm transition shrink-0 active:scale-95">
+            <i data-lucide="file-text" class="w-4 h-4"></i> Draft Lesson Plan
           </button>
         </div>
 
-        <!-- Grade Selector Pills -->
-        <div class="flex flex-wrap gap-2 pt-5">
-          <button onclick="showGradeSyllabus('p1')" id="grade-btn-p1" class="grade-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-coral-500 text-white shadow-xs">Primary 1</button>
-          <button onclick="showGradeSyllabus('p2')" id="grade-btn-p2" class="grade-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-harmony-100 text-harmony-700 hover:bg-harmony-200">Primary 2</button>
-          <button onclick="showGradeSyllabus('p3')" id="grade-btn-p3" class="grade-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-harmony-100 text-harmony-700 hover:bg-harmony-200">Primary 3</button>
-          <button onclick="showGradeSyllabus('p4')" id="grade-btn-p4" class="grade-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-harmony-100 text-harmony-700 hover:bg-harmony-200">Primary 4</button>
-          <button onclick="showGradeSyllabus('p5')" id="grade-btn-p5" class="grade-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-harmony-100 text-harmony-700 hover:bg-harmony-200">Primary 5</button>
-          <button onclick="showGradeSyllabus('p6')" id="grade-btn-p6" class="grade-tab-btn px-4 py-2 rounded-xl text-xs font-bold transition bg-harmony-100 text-harmony-700 hover:bg-harmony-200">Primary 6</button>
+        <!-- Grade Selector Pills (Scrollable horizontally on mobile phones) -->
+        <div class="flex items-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar py-1">
+          <button onclick="showGradeSyllabus('p1')" id="grade-btn-p1" class="grade-tab-btn px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold transition bg-coral-500 text-white shadow-xs whitespace-nowrap">Primary 1</button>
+          <button onclick="showGradeSyllabus('p2')" id="grade-btn-p2" class="grade-tab-btn px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold transition bg-harmony-100 text-harmony-700 hover:bg-harmony-200 whitespace-nowrap">Primary 2</button>
+          <button onclick="showGradeSyllabus('p3')" id="grade-btn-p3" class="grade-tab-btn px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold transition bg-harmony-100 text-harmony-700 hover:bg-harmony-200 whitespace-nowrap">Primary 3</button>
+          <button onclick="showGradeSyllabus('p4')" id="grade-btn-p4" class="grade-tab-btn px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold transition bg-harmony-100 text-harmony-700 hover:bg-harmony-200 whitespace-nowrap">Primary 4</button>
+          <button onclick="showGradeSyllabus('p5')" id="grade-btn-p5" class="grade-tab-btn px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold transition bg-harmony-100 text-harmony-700 hover:bg-harmony-200 whitespace-nowrap">Primary 5</button>
+          <button onclick="showGradeSyllabus('p6')" id="grade-btn-p6" class="grade-tab-btn px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold transition bg-harmony-100 text-harmony-700 hover:bg-harmony-200 whitespace-nowrap">Primary 6</button>
         </div>
       </div>
 
       <!-- Dynamic Grade Content Display -->
-      <div id="gradeSyllabusDisplay" class="space-y-6">
+      <div id="gradeSyllabusDisplay" class="space-y-4 sm:space-y-6">
         <!-- Injected via JavaScript based on chosen grade -->
       </div>
 
       <!-- Saved Lesson Plans Gallery -->
-      <div class="bg-white rounded-3xl p-6 border border-harmony-200 shadow-sm space-y-4">
+      <div class="bg-white rounded-3xl p-4 sm:p-6 border border-harmony-200 shadow-sm space-y-3 sm:space-y-4">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <div class="w-8 h-8 rounded-xl bg-sage-100 text-sage-700 flex items-center justify-center font-bold">
+            <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-sage-100 text-sage-700 flex items-center justify-center font-bold">
               <i data-lucide="archive" class="w-4 h-4"></i>
             </div>
             <div>
-              <h3 class="font-bold text-harmony-900 text-base">Adeline's Saved Lesson Plans</h3>
-              <p class="text-xs text-harmony-500">Ready-to-teach outlines saved on this device</p>
+              <h3 class="font-bold text-harmony-900 text-sm sm:text-base">Adeline's Saved Lesson Plans</h3>
+              <p class="text-[11px] sm:text-xs text-harmony-500">Ready-to-teach outlines</p>
             </div>
           </div>
           <span id="savedPlansCount" class="text-xs font-semibold text-harmony-500 font-mono">0 Plans</span>
         </div>
 
-        <div id="savedPlansList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div id="savedPlansList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           <!-- Dynamically populated or empty placeholder -->
         </div>
       </div>
@@ -566,34 +610,34 @@
     <!-- ========================================== -->
     <!-- TAB 3: TEACHING INSPIRATION SPARKS & GAMES -->
     <!-- ========================================== -->
-    <div id="tab-music-sparks" class="tab-content hidden space-y-6">
+    <div id="tab-music-sparks" class="tab-content hidden space-y-4 sm:space-y-6">
       
       <!-- Sparks Control Bar -->
-      <div class="bg-white rounded-3xl p-6 border border-harmony-200 shadow-sm space-y-4">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h2 class="text-2xl font-serif font-bold text-harmony-900">Music Education Idea Generator</h2>
-            <p class="text-sm text-harmony-600">Fresh games, Dalcroze movement, Kodály Solfège drills, and Singapore multicultural music ideas</p>
-          </div>
-          <div class="flex items-center gap-2">
-            <button onclick="filterSparks('all')" class="spark-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-coral-500 text-white">All Ideas</button>
-            <button onclick="filterSparks('warmup')" class="spark-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-harmony-100 text-harmony-700 hover:bg-harmony-200">5-Min Warmups</button>
-            <button onclick="filterSparks('movement')" class="spark-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-harmony-100 text-harmony-700 hover:bg-harmony-200">Dalcroze & Movement</button>
-            <button onclick="filterSparks('singing')" class="spark-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-harmony-100 text-harmony-700 hover:bg-harmony-200">Vocal & Solfège</button>
-            <button onclick="filterSparks('instruments')" class="spark-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-harmony-100 text-harmony-700 hover:bg-harmony-200">Recorder & Ukulele</button>
-            <button onclick="filterSparks('heritage')" class="spark-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-harmony-100 text-harmony-700 hover:bg-harmony-200">Singapore Heritage</button>
-          </div>
+      <div class="bg-white rounded-3xl p-4 sm:p-6 border border-harmony-200 shadow-sm space-y-3 sm:space-y-4">
+        <div>
+          <h2 class="text-xl sm:text-2xl font-serif font-bold text-harmony-900">Music Education Idea Generator</h2>
+          <p class="text-xs sm:text-sm text-harmony-600">Fresh games, Dalcroze movement, Kodály Solfège drills, and Singapore multicultural music</p>
+        </div>
+
+        <!-- Filter Buttons (Scroll horizontally on mobile) -->
+        <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+          <button onclick="filterSparks('all')" class="spark-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-coral-500 text-white whitespace-nowrap">All Ideas</button>
+          <button onclick="filterSparks('warmup')" class="spark-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-harmony-100 text-harmony-700 hover:bg-harmony-200 whitespace-nowrap">5-Min Warmups</button>
+          <button onclick="filterSparks('movement')" class="spark-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-harmony-100 text-harmony-700 hover:bg-harmony-200 whitespace-nowrap">Dalcroze Movement</button>
+          <button onclick="filterSparks('singing')" class="spark-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-harmony-100 text-harmony-700 hover:bg-harmony-200 whitespace-nowrap">Vocal & Solfège</button>
+          <button onclick="filterSparks('instruments')" class="spark-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-harmony-100 text-harmony-700 hover:bg-harmony-200 whitespace-nowrap">Recorder & Ukulele</button>
+          <button onclick="filterSparks('heritage')" class="spark-filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-harmony-100 text-harmony-700 hover:bg-harmony-200 whitespace-nowrap">SG Heritage</button>
         </div>
 
         <div class="relative">
-          <input type="text" id="sparkSearchInput" oninput="searchSparks()" placeholder="Search activities by keyword (e.g. rhythm, angklung, canon, pitch, game, ostinato)..." 
+          <input type="text" id="sparkSearchInput" oninput="searchSparks()" placeholder="Search activities (e.g. rhythm, angklung, canon, pitch)..." 
             class="w-full bg-[#faf7f5] border border-harmony-200 rounded-2xl px-4 py-2.5 text-sm pl-10 focus:ring-2 focus:ring-coral-500/20 focus:border-coral-500">
           <i data-lucide="search" class="w-4 h-4 text-harmony-400 absolute left-3.5 top-3.5"></i>
         </div>
       </div>
 
       <!-- Sparks Grid -->
-      <div id="sparksGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div id="sparksGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5">
         <!-- Rendered via JS -->
       </div>
 
@@ -602,108 +646,118 @@
     <!-- ========================================== -->
     <!-- TAB 4: MY 2 KIDS MATTERS (MOM OF 2 HUB)    -->
     <!-- ========================================== -->
-    <div id="tab-two-kids" class="tab-content hidden space-y-6">
+    <div id="tab-two-kids" class="tab-content hidden space-y-4 sm:space-y-6">
       
       <!-- Kids Header & Profile Customizer -->
-      <div class="bg-gradient-to-r from-coral-50 via-white to-sage-50 rounded-3xl p-6 sm:p-7 border border-harmony-200 shadow-sm">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="bg-gradient-to-r from-coral-50 via-white to-sage-50 rounded-3xl p-4 sm:p-7 border border-harmony-200 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <div class="flex items-center gap-2">
-              <span class="bg-sage-100 text-sage-800 text-xs font-bold px-2.5 py-0.5 rounded-full">Mother of 2 Sanctuary</span>
-              <span class="text-xs text-harmony-500">Nurturing with Music, Love & Structure</span>
+              <span class="bg-sage-100 text-sage-800 text-[10px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full">Mother of 2 Sanctuary</span>
+              <span class="text-[10px] sm:text-xs text-harmony-500">Nurturing with Music & Love</span>
             </div>
-            <h2 class="text-2xl font-serif font-bold text-harmony-900 mt-1">Kids' Routines, Learning & Sparks</h2>
-            <p class="text-sm text-harmony-600">Keep both children's spelling lists, school schedules, health memos, and joyful bonding sparks in one calm place.</p>
+            <h2 class="text-xl sm:text-2xl font-serif font-bold text-harmony-900 mt-1">Kids' Routines & Sparks</h2>
+            <p class="text-xs sm:text-sm text-harmony-600">Both children's spelling lists, routines, and screen-free bonding games in one calm space.</p>
           </div>
-          <button onclick="openKidSettingsModal()" class="px-3.5 py-2 bg-white border border-harmony-300 rounded-xl text-xs font-bold text-harmony-800 hover:bg-harmony-100 flex items-center gap-1.5 shadow-xs transition shrink-0">
-            <i data-lucide="settings" class="w-4 h-4 text-coral-500"></i> Customize Kid Profiles
+          <button onclick="openKidSettingsModal()" class="self-start sm:self-auto px-3 py-1.5 sm:py-2 bg-white border border-harmony-300 rounded-xl text-xs font-bold text-harmony-800 hover:bg-harmony-100 flex items-center gap-1.5 shadow-xs transition shrink-0 active:scale-95">
+            <i data-lucide="settings" class="w-4 h-4 text-coral-500"></i> Customize Profiles
           </button>
         </div>
       </div>
 
-      <!-- Two Children Side-by-Side Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Mobile Segmented Kid Selector (Only visible on small phone screens) -->
+      <div class="md:hidden flex rounded-2xl bg-harmony-100 p-1 border border-harmony-200/80">
+        <button onclick="setMobileKidView(1)" id="mobile-kid-btn-1" class="flex-1 py-2 text-xs font-bold rounded-xl transition bg-white text-sage-800 shadow-xs flex items-center justify-center gap-1.5">
+          <span>🧒</span> <span id="mobileKid1TabLabel">Child 1</span>
+        </button>
+        <button onclick="setMobileKidView(2)" id="mobile-kid-btn-2" class="flex-1 py-2 text-xs font-bold rounded-xl transition text-harmony-600 hover:text-harmony-900 flex items-center justify-center gap-1.5">
+          <span>👧</span> <span id="mobileKid2TabLabel">Child 2</span>
+        </button>
+      </div>
+
+      <!-- Two Children Cards: Responsive (Segmented on Phone, Side-by-side on Tablet/PC) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
 
         <!-- Child 1 Card -->
-        <div class="bg-white rounded-3xl p-6 border border-sage-200/80 shadow-sm space-y-5">
+        <div id="kid1CardContainer" class="bg-white rounded-3xl p-4 sm:p-6 border border-sage-200/80 shadow-sm space-y-4">
           <div class="flex items-center justify-between pb-3 border-b border-sage-100">
             <div class="flex items-center gap-3">
-              <div class="w-11 h-11 rounded-2xl bg-sage-100 text-sage-700 flex items-center justify-center font-bold text-lg">
+              <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-sage-100 text-sage-700 flex items-center justify-center font-bold text-lg">
                 🧒
               </div>
               <div>
-                <h3 class="font-bold text-harmony-900 text-base flex items-center gap-1.5" id="profileKid1Name">Child 1 (Older)</h3>
+                <h3 class="font-bold text-harmony-900 text-sm sm:text-base flex items-center gap-1.5" id="profileKid1Name">Child 1 (Older)</h3>
                 <span class="text-xs text-sage-700 font-medium" id="profileKid1Grade">Primary School • Age 9</span>
               </div>
             </div>
-            <span class="px-2.5 py-1 bg-sage-50 text-sage-800 rounded-full text-xs font-bold border border-sage-200">Track 1</span>
+            <span class="px-2.5 py-0.5 sm:py-1 bg-sage-50 text-sage-800 rounded-full text-[11px] sm:text-xs font-bold border border-sage-200">Track 1</span>
           </div>
 
           <!-- Daily Habits Checklist -->
-          <div class="space-y-3">
+          <div class="space-y-2.5 sm:space-y-3">
             <h4 class="text-xs font-bold uppercase tracking-wider text-harmony-600 flex items-center gap-1.5">
-              <i data-lucide="list-checks" class="w-3.5 h-3.5 text-sage-600"></i> Daily School & Routine Checklist
+              <i data-lucide="list-checks" class="w-3.5 h-3.5 text-sage-600"></i> Daily Checklist
             </h4>
             <div class="space-y-2 text-xs" id="kid1CustomChecklist">
               <!-- Rendered via JS -->
             </div>
             
-            <form onsubmit="addKidItem(event, 1)" class="flex gap-2 pt-2">
-              <input type="text" id="newKid1Task" placeholder="Add specific task (e.g. Science worksheet p.24)..." 
-                class="flex-1 bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-1.5 text-xs focus:ring-1 focus:ring-sage-500 focus:outline-none">
-              <button type="submit" class="bg-sage-600 hover:bg-sage-700 text-white px-3 py-1.5 rounded-xl text-xs font-semibold">Add</button>
+            <form onsubmit="addKidItem(event, 1)" class="flex gap-2 pt-1.5">
+              <input type="text" id="newKid1Task" placeholder="Add task (e.g. Science sheet p.24)..." 
+                class="flex-1 bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-sage-500 focus:outline-none">
+              <button type="submit" class="bg-sage-600 hover:bg-sage-700 text-white px-3.5 py-2 rounded-xl text-xs font-semibold active:scale-95 shrink-0">Add</button>
             </form>
           </div>
 
           <!-- Memos & Notes for Child 1 -->
-          <div class="space-y-2 pt-3 border-t border-harmony-100">
+          <div class="space-y-1.5 pt-3 border-t border-harmony-100">
             <label class="text-xs font-bold text-harmony-700 flex items-center justify-between">
               <span>Important Notes & Memos</span>
               <span class="text-[10px] text-harmony-400">Autosaves</span>
             </label>
-            <textarea id="kid1Notes" onchange="saveKidNotes(1)" rows="3" placeholder="e.g. Spelling test every Thursday; Piano lesson Saturday 10am; Swimming gear on Wednesday." 
+            <textarea id="kid1Notes" onchange="saveKidNotes(1)" rows="3" placeholder="e.g. Ting Xie test every Thursday; Bring recorder every Wed; Swimming gear on Friday." 
               class="w-full bg-[#faf7f5] border border-harmony-200 rounded-xl p-3 text-xs focus:ring-1 focus:ring-sage-500 focus:outline-none"></textarea>
           </div>
         </div>
 
         <!-- Child 2 Card -->
-        <div class="bg-white rounded-3xl p-6 border border-coral-200/80 shadow-sm space-y-5">
+        <div id="kid2CardContainer" class="bg-white rounded-3xl p-4 sm:p-6 border border-coral-200/80 shadow-sm space-y-4 hidden md:block">
           <div class="flex items-center justify-between pb-3 border-b border-coral-100">
             <div class="flex items-center gap-3">
-              <div class="w-11 h-11 rounded-2xl bg-coral-100 text-coral-700 flex items-center justify-center font-bold text-lg">
+              <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-coral-100 text-coral-700 flex items-center justify-center font-bold text-lg">
                 👧
               </div>
               <div>
-                <h3 class="font-bold text-harmony-900 text-base flex items-center gap-1.5" id="profileKid2Name">Child 2 (Younger)</h3>
+                <h3 class="font-bold text-harmony-900 text-sm sm:text-base flex items-center gap-1.5" id="profileKid2Name">Child 2 (Younger)</h3>
                 <span class="text-xs text-coral-700 font-medium" id="profileKid2Grade">Primary School • Age 7</span>
               </div>
             </div>
-            <span class="px-2.5 py-1 bg-coral-50 text-coral-800 rounded-full text-xs font-bold border border-coral-200">Track 2</span>
+            <span class="px-2.5 py-0.5 sm:py-1 bg-coral-50 text-coral-800 rounded-full text-[11px] sm:text-xs font-bold border border-coral-200">Track 2</span>
           </div>
 
           <!-- Daily Habits Checklist -->
-          <div class="space-y-3">
+          <div class="space-y-2.5 sm:space-y-3">
             <h4 class="text-xs font-bold uppercase tracking-wider text-harmony-600 flex items-center gap-1.5">
-              <i data-lucide="list-checks" class="w-3.5 h-3.5 text-coral-600"></i> Daily School & Routine Checklist
+              <i data-lucide="list-checks" class="w-3.5 h-3.5 text-coral-600"></i> Daily Checklist
             </h4>
             <div class="space-y-2 text-xs" id="kid2CustomChecklist">
               <!-- Rendered via JS -->
             </div>
             
-            <form onsubmit="addKidItem(event, 2)" class="flex gap-2 pt-2">
-              <input type="text" id="newKid2Task" placeholder="Add specific task (e.g. Color phonics book p.8)..." 
-                class="flex-1 bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-1.5 text-xs focus:ring-1 focus:ring-coral-500 focus:outline-none">
-              <button type="submit" class="bg-coral-500 hover:bg-coral-600 text-white px-3 py-1.5 rounded-xl text-xs font-semibold">Add</button>
+            <form onsubmit="addKidItem(event, 2)" class="flex gap-2 pt-1.5">
+              <input type="text" id="newKid2Task" placeholder="Add task (e.g. Color phonics p.8)..." 
+                class="flex-1 bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-coral-500 focus:outline-none">
+              <button type="submit" class="bg-coral-500 hover:bg-coral-600 text-white px-3.5 py-2 rounded-xl text-xs font-semibold active:scale-95 shrink-0">Add</button>
             </form>
           </div>
 
           <!-- Memos & Notes for Child 2 -->
-          <div class="space-y-2 pt-3 border-t border-harmony-100">
+          <div class="space-y-1.5 pt-3 border-t border-harmony-100">
             <label class="text-xs font-bold text-harmony-700 flex items-center justify-between">
               <span>Important Notes & Memos</span>
               <span class="text-[10px] text-harmony-400">Autosaves</span>
             </label>
-            <textarea id="kid2Notes" onchange="saveKidNotes(2)" rows="3" placeholder="e.g. Ting Xie every Tuesday; Needs new water bottle lid; Bring craft scissors for Art on Friday." 
+            <textarea id="kid2Notes" onchange="saveKidNotes(2)" rows="3" placeholder="e.g. English spelling due Tuesday; Needs new water bottle lid; Bring scissors on Friday." 
               class="w-full bg-[#faf7f5] border border-harmony-200 rounded-xl p-3 text-xs focus:ring-1 focus:ring-coral-500 focus:outline-none"></textarea>
           </div>
         </div>
@@ -711,20 +765,20 @@
       </div>
 
       <!-- Fun Mother-Kid Musical & Bonding Ideas Library -->
-      <div class="bg-white rounded-3xl p-6 border border-harmony-200 shadow-sm space-y-4">
+      <div class="bg-white rounded-3xl p-4 sm:p-6 border border-harmony-200 shadow-sm space-y-3 sm:space-y-4">
         <div class="flex items-center justify-between">
           <div>
-            <h3 class="font-bold text-harmony-900 text-lg flex items-center gap-2">
-              <i data-lucide="sparkles" class="w-5 h-5 text-amber-500"></i> Musical Motherhood Sparks (Home Edition)
+            <h3 class="font-bold text-harmony-900 text-base sm:text-lg flex items-center gap-2">
+              <i data-lucide="sparkles" class="w-4 h-4 sm:w-5 sm:h-5 text-amber-500"></i> Musical Motherhood Sparks
             </h3>
-            <p class="text-xs text-harmony-600">Quick 10-minute games to connect with your kids without screen exhaustion</p>
+            <p class="text-[11px] sm:text-xs text-harmony-600">10-minute games to connect with your kids screen-free</p>
           </div>
-          <button onclick="renderNewHomeSparks()" class="text-xs font-semibold text-coral-600 hover:text-coral-700 flex items-center gap-1">
-            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Shuffle Ideas
+          <button onclick="renderNewHomeSparks()" class="text-xs font-semibold text-coral-600 hover:text-coral-700 flex items-center gap-1 active:scale-95">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Shuffle
           </button>
         </div>
 
-        <div id="homeSparksGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div id="homeSparksGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           <!-- Injected via JS -->
         </div>
       </div>
@@ -733,16 +787,98 @@
 
   </main>
 
-  <!-- Footer with Backup, Export and Encouragement -->
-  <footer class="bg-white border-t border-harmony-200 py-6 px-4 sm:px-6 lg:px-8 mt-12 no-print text-xs text-harmony-600">
+  <!-- ========================================== -->
+  <!-- MOBILE BOTTOM NAVIGATION BAR (Thumb Zone)  -->
+  <!-- ========================================== -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-harmony-200 z-50 px-2 py-1.5 flex items-center justify-around shadow-lg no-print">
+    <button onclick="switchTab('daily-hub')" id="mobile-nav-daily-hub" class="mobile-nav-btn flex-1 flex flex-col items-center justify-center py-1 text-coral-500 transition">
+      <i data-lucide="calendar-check" class="w-5 h-5 mb-0.5"></i>
+      <span class="text-[10px] font-bold">Today</span>
+    </button>
+    
+    <button onclick="switchTab('moe-curriculum')" id="mobile-nav-moe-curriculum" class="mobile-nav-btn flex-1 flex flex-col items-center justify-center py-1 text-harmony-500 hover:text-harmony-800 transition">
+      <i data-lucide="graduation-cap" class="w-5 h-5 mb-0.5"></i>
+      <span class="text-[10px] font-semibold">Syllabus</span>
+    </button>
+
+    <!-- Floating Center Action Button for Mobile -->
+    <div class="relative flex-1 flex justify-center -mt-5">
+      <button onclick="openMobileQuickSheet()" class="w-12 h-12 rounded-full bg-gradient-to-tr from-coral-500 to-amber-500 text-white flex items-center justify-center shadow-lg shadow-coral-500/40 active:scale-95 transition" title="Quick Action">
+        <i data-lucide="plus" class="w-6 h-6"></i>
+      </button>
+    </div>
+
+    <button onclick="switchTab('music-sparks')" id="mobile-nav-music-sparks" class="mobile-nav-btn flex-1 flex flex-col items-center justify-center py-1 text-harmony-500 hover:text-harmony-800 transition">
+      <i data-lucide="sparkles" class="w-5 h-5 mb-0.5"></i>
+      <span class="text-[10px] font-semibold">Sparks</span>
+    </button>
+
+    <button onclick="switchTab('two-kids')" id="mobile-nav-two-kids" class="mobile-nav-btn flex-1 flex flex-col items-center justify-center py-1 text-harmony-500 hover:text-harmony-800 transition">
+      <i data-lucide="baby" class="w-5 h-5 mb-0.5"></i>
+      <span class="text-[10px] font-semibold">2 Kids</span>
+    </button>
+  </nav>
+
+  <!-- ========================================== -->
+  <!-- MOBILE QUICK ACTION BOTTOM SHEET           -->
+  <!-- ========================================== -->
+  <div id="mobileQuickSheet" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 hidden flex items-end justify-center">
+    <div class="bg-white rounded-t-3xl w-full max-w-lg p-5 shadow-2xl space-y-4 border-t border-harmony-200 animate-in slide-in-from-bottom duration-200">
+      <div class="flex items-center justify-between pb-2 border-b border-harmony-100">
+        <h3 class="font-bold text-harmony-900 text-sm flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-coral-500"></span> Quick Actions
+        </h3>
+        <button onclick="closeMobileQuickSheet()" class="text-harmony-400 hover:text-harmony-700 p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2.5 text-xs">
+        <button onclick="closeMobileQuickSheet(); switchTab('daily-hub'); document.getElementById('newTaskTitle').focus();" class="p-3 rounded-2xl bg-coral-50 hover:bg-coral-100 border border-coral-200 text-left space-y-1 transition">
+          <div class="w-7 h-7 rounded-xl bg-coral-500 text-white flex items-center justify-center font-bold">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+          </div>
+          <span class="font-bold text-coral-900 block">Add Daily Task</span>
+          <p class="text-[10px] text-harmony-600">MOE prep or home item</p>
+        </button>
+
+        <button onclick="closeMobileQuickSheet(); openLessonPlanModal();" class="p-3 rounded-2xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-left space-y-1 transition">
+          <div class="w-7 h-7 rounded-xl bg-amber-500 text-white flex items-center justify-center font-bold">
+            <i data-lucide="file-text" class="w-4 h-4"></i>
+          </div>
+          <span class="font-bold text-amber-900 block">Plan Lesson</span>
+          <p class="text-[10px] text-harmony-600">Draft 30m/60m outline</p>
+        </button>
+
+        <button onclick="closeMobileQuickSheet(); generateRandomSpark(); switchTab('daily-hub');" class="p-3 rounded-2xl bg-sage-50 hover:bg-sage-100 border border-sage-200 text-left space-y-1 transition">
+          <div class="w-7 h-7 rounded-xl bg-sage-600 text-white flex items-center justify-center font-bold">
+            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+          </div>
+          <span class="font-bold text-sage-900 block">Spin Music Game</span>
+          <p class="text-[10px] text-harmony-600">Instant 5-min warmup</p>
+        </button>
+
+        <button onclick="closeMobileQuickSheet(); switchTab('two-kids');" class="p-3 rounded-2xl bg-purple-50 hover:bg-purple-100 border border-purple-200 text-left space-y-1 transition">
+          <div class="w-7 h-7 rounded-xl bg-purple-500 text-white flex items-center justify-center font-bold">
+            <i data-lucide="heart" class="w-4 h-4"></i>
+          </div>
+          <span class="font-bold text-purple-900 block">Check 2 Kids</span>
+          <p class="text-[10px] text-harmony-600">Spelling & bag packing</p>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer with Backup & Restore (Hidden during mobile scrolling, accessible at bottom) -->
+  <footer class="bg-white border-t border-harmony-200 py-6 px-4 sm:px-6 lg:px-8 mt-10 no-print text-xs text-harmony-600">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
       <div class="flex items-center gap-2">
         <span class="w-6 h-6 rounded-lg bg-coral-100 text-coral-600 flex items-center justify-center font-bold text-xs">♪</span>
-        <span>Crafted with admiration for <strong>Adeline</strong> • Music Educator & Loving Mother</span>
+        <span>Crafted for <strong>Adeline</strong> • Music Educator & Loving Mother</span>
       </div>
       <div class="flex items-center gap-4">
         <button onclick="exportData()" class="hover:text-harmony-900 flex items-center gap-1 transition">
-          <i data-lucide="download" class="w-3.5 h-3.5"></i> Backup Data (JSON)
+          <i data-lucide="download" class="w-3.5 h-3.5"></i> Backup JSON
         </button>
         <label class="hover:text-harmony-900 flex items-center gap-1 cursor-pointer transition">
           <i data-lucide="upload" class="w-3.5 h-3.5"></i> Restore
@@ -756,34 +892,34 @@
   <!-- ========================================== -->
   <!-- MODAL: DRAFT LESSON PLAN                   -->
   <!-- ========================================== -->
-  <div id="lessonPlanModal" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-7 shadow-2xl space-y-5 border border-harmony-200">
-      <div class="flex items-center justify-between pb-3 border-b border-harmony-100">
+  <div id="lessonPlanModal" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] overflow-y-auto p-4 sm:p-7 shadow-2xl space-y-4 border border-harmony-200">
+      <div class="flex items-center justify-between pb-2.5 border-b border-harmony-100">
         <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-xl bg-coral-100 text-coral-600 flex items-center justify-center font-bold">
+          <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-coral-100 text-coral-600 flex items-center justify-center font-bold">
             <i data-lucide="music" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 class="font-bold text-harmony-900 text-lg">MOE Music Lesson Plan Builder</h3>
-            <p class="text-xs text-harmony-500">Structured for 30m / 60m Singapore Primary Music classes</p>
+            <h3 class="font-bold text-harmony-900 text-base sm:text-lg">MOE Music Lesson Plan</h3>
+            <p class="text-[11px] sm:text-xs text-harmony-500">Structured for 30m / 60m SG Primary Music</p>
           </div>
         </div>
-        <button onclick="closeLessonPlanModal()" class="text-harmony-400 hover:text-harmony-700 p-1 rounded-lg">
+        <button onclick="closeLessonPlanModal()" class="text-harmony-400 hover:text-harmony-700 p-1.5 rounded-lg">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
-      <form onsubmit="handleSaveLessonPlan(event)" class="space-y-4 text-xs">
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <form onsubmit="handleSaveLessonPlan(event)" class="space-y-3.5 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
           <div>
             <label class="font-semibold text-harmony-700 block mb-1">Grade Level</label>
             <select id="lpGrade" class="w-full bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-coral-500">
-              <option value="Primary 1">Primary 1 (Foundational Beat & Sol-Mi)</option>
-              <option value="Primary 2">Primary 2 (Solfège Sol-Mi-La & Ostinato)</option>
+              <option value="Primary 1">Primary 1 (Beat & Sol-Mi)</option>
+              <option value="Primary 2">Primary 2 (Sol-Mi-La & Ostinato)</option>
               <option value="Primary 3" selected>Primary 3 (Recorder B-A-G & Kompang)</option>
-              <option value="Primary 4">Primary 4 (Recorder Low C-D-E & Angklung)</option>
-              <option value="Primary 5">Primary 5 (Ukulele Chords & Digital Music)</option>
-              <option value="Primary 6">Primary 6 (Ensemble & Southeast Asian Traditions)</option>
+              <option value="Primary 4">Primary 4 (Recorder C-D-E & Angklung)</option>
+              <option value="Primary 5">Primary 5 (Ukulele Chords & DAWs)</option>
+              <option value="Primary 6">Primary 6 (Ensemble & Gamelan)</option>
             </select>
           </div>
           <div>
@@ -801,33 +937,33 @@
 
         <div>
           <label class="font-semibold text-harmony-700 block mb-1">Lesson Topic / Focus Song</label>
-          <input type="text" id="lpTopic" required placeholder="e.g. Di Tanjong Katong – Kompang Beat Patterns & Staccato Recorder" class="w-full bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-coral-500">
+          <input type="text" id="lpTopic" required placeholder="e.g. Di Tanjong Katong – Kompang Beat Patterns" class="w-full bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-coral-500">
         </div>
 
         <div>
           <label class="font-semibold text-harmony-700 block mb-1">Learning Outcomes (Perform / Create / Listen)</label>
-          <textarea id="lpOutcomes" rows="2" placeholder="e.g. By end of lesson, pupils will: 1. Sing melody accurately in tune; 2. Play steady beat pattern on Kompang; 3. Identify binary (AB) form." class="w-full bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-coral-500"></textarea>
+          <textarea id="lpOutcomes" rows="2" placeholder="e.g. By end of lesson, pupils will: 1. Sing melody accurately in tune; 2. Play steady beat on Kompang." class="w-full bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-coral-500"></textarea>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
           <div class="sm:col-span-1">
             <label class="font-semibold text-harmony-700 block mb-1">1. Warm-Up (5-8 mins)</label>
-            <textarea id="lpWarmup" rows="3" placeholder="Vocal sirens, echo clapping, rhythm card flashcards..." class="w-full bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-coral-500"></textarea>
+            <textarea id="lpWarmup" rows="3" placeholder="Vocal sirens, echo clapping..." class="w-full bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-coral-500"></textarea>
           </div>
           <div class="sm:col-span-2">
-            <label class="font-semibold text-harmony-700 block mb-1">2. Core Development & Active Music Making (30-40 mins)</label>
-            <textarea id="lpCore" rows="3" placeholder="Section-by-section singing, instrumental hand-off, group polyrhythmic layering..." class="w-full bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-coral-500"></textarea>
+            <label class="font-semibold text-harmony-700 block mb-1">2. Core Development (30-40 mins)</label>
+            <textarea id="lpCore" rows="3" placeholder="Section-by-section singing, instrumental hand-off, rhythm layering..." class="w-full bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-coral-500"></textarea>
           </div>
         </div>
 
         <div>
           <label class="font-semibold text-harmony-700 block mb-1">3. Closure & Reflection / Exit Ticket (5-10 mins)</label>
-          <input type="text" id="lpClosure" placeholder="Show thumbs up/sideways for confidence, class unison showcase performance..." class="w-full bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-coral-500">
+          <input type="text" id="lpClosure" placeholder="Show thumbs up/sideways for confidence..." class="w-full bg-[#faf7f5] border border-harmony-200 rounded-xl px-3 py-2 text-xs focus:ring-1 focus:ring-coral-500">
         </div>
 
-        <div class="flex items-center justify-end gap-2 pt-3 border-t border-harmony-100">
+        <div class="flex items-center justify-end gap-2 pt-2 border-t border-harmony-100">
           <button type="button" onclick="closeLessonPlanModal()" class="px-4 py-2 rounded-xl text-harmony-700 hover:bg-harmony-100 font-semibold">Cancel</button>
-          <button type="submit" class="bg-coral-500 hover:bg-coral-600 text-white font-semibold px-5 py-2 rounded-xl shadow-sm transition">Save to My Lesson Archives</button>
+          <button type="submit" class="bg-coral-500 hover:bg-coral-600 text-white font-semibold px-4 py-2 rounded-xl shadow-sm transition active:scale-95">Save Plan</button>
         </div>
       </form>
     </div>
@@ -836,17 +972,17 @@
   <!-- ========================================== -->
   <!-- MODAL: KID PROFILE SETTINGS                -->
   <!-- ========================================== -->
-  <div id="kidSettingsModal" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-harmony-200">
+  <div id="kidSettingsModal" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-4 sm:p-6 shadow-2xl space-y-3.5 border border-harmony-200">
       <div class="flex items-center justify-between pb-2 border-b border-harmony-100">
         <h3 class="font-bold text-harmony-900 text-base">Customize Your 2 Kids' Profiles</h3>
-        <button onclick="closeKidSettingsModal()" class="text-harmony-400 hover:text-harmony-700">
+        <button onclick="closeKidSettingsModal()" class="text-harmony-400 hover:text-harmony-700 p-1">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
-      <form onsubmit="handleSaveKidSettings(event)" class="space-y-4 text-xs">
-        <div class="space-y-3 p-3 bg-sage-50/50 rounded-2xl border border-sage-200/50">
+      <form onsubmit="handleSaveKidSettings(event)" class="space-y-3 text-xs">
+        <div class="space-y-2.5 p-3 bg-sage-50/50 rounded-2xl border border-sage-200/50">
           <h4 class="font-bold text-sage-900">Child 1 (First Born)</h4>
           <div>
             <label class="font-semibold text-harmony-700 block mb-1">Name / Nickname</label>
@@ -858,7 +994,7 @@
           </div>
         </div>
 
-        <div class="space-y-3 p-3 bg-coral-50/50 rounded-2xl border border-coral-200/50">
+        <div class="space-y-2.5 p-3 bg-coral-50/50 rounded-2xl border border-coral-200/50">
           <h4 class="font-bold text-coral-900">Child 2 (Second Born)</h4>
           <div>
             <label class="font-semibold text-harmony-700 block mb-1">Name / Nickname</label>
@@ -872,9 +1008,43 @@
 
         <div class="flex items-center justify-end gap-2 pt-2">
           <button type="button" onclick="closeKidSettingsModal()" class="px-4 py-2 rounded-xl text-harmony-700 hover:bg-harmony-100 font-semibold">Cancel</button>
-          <button type="submit" class="bg-coral-500 hover:bg-coral-600 text-white font-semibold px-4 py-2 rounded-xl transition">Save Profiles</button>
+          <button type="submit" class="bg-coral-500 hover:bg-coral-600 text-white font-semibold px-4 py-2 rounded-xl transition active:scale-95">Save</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: ADD TO PHONE HOME SCREEN GUIDE      -->
+  <!-- ========================================== -->
+  <div id="installGuideModal" class="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-5 shadow-2xl space-y-4 border border-harmony-200 text-xs">
+      <div class="flex items-center justify-between pb-2 border-b border-harmony-100">
+        <h3 class="font-bold text-harmony-900 text-sm flex items-center gap-1.5">
+          <i data-lucide="smartphone" class="w-4 h-4 text-coral-500"></i> Use as Mobile Phone App
+        </h3>
+        <button onclick="closeInstallGuideModal()" class="text-harmony-400 hover:text-harmony-700 p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-harmony-700 leading-relaxed">
+        <p>You can add HarmonyHub directly to Adeline's phone home screen so it opens instantly with 1 tap like an app:</p>
+        
+        <div class="p-3 bg-coral-50/60 rounded-xl border border-coral-200/60 space-y-1">
+          <span class="font-bold text-coral-900 block">📱 On iPhone / iPad (Safari):</span>
+          <p class="text-[11px]">1. Tap the <strong>Share</strong> button (box with arrow <span class="font-mono">[↑]</span>) at bottom of Safari.</p>
+          <p class="text-[11px]">2. Scroll down and tap <strong>"Add to Home Screen"</strong>.</p>
+        </div>
+
+        <div class="p-3 bg-amber-50/60 rounded-xl border border-amber-200/60 space-y-1">
+          <span class="font-bold text-amber-900 block">🤖 On Android Phone / Tablet (Chrome):</span>
+          <p class="text-[11px]">1. Tap the three dots menu <span class="font-mono">⋮</span> at top right.</p>
+          <p class="text-[11px]">2. Tap <strong>"Add to Home screen"</strong> or <strong>"Install app"</strong>.</p>
+        </div>
+      </div>
+
+      <button onclick="closeInstallGuideModal()" class="w-full bg-coral-500 text-white font-bold py-2.5 rounded-xl transition">Got it!</button>
     </div>
   </div>
 
@@ -900,7 +1070,7 @@
         osc.type = 'triangle'; // pleasant bell-like chime
         osc.frequency.setValueAtTime(frequency, ctx.currentTime);
         
-        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.setValueAtTime(0.25, ctx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.2);
 
         osc.connect(gain);
@@ -1319,25 +1489,104 @@
       updateUI();
     }
 
-    // Tab Navigation
+    // Tab Navigation for both Desktop/Tablet and Mobile Bottom Bar
     function switchTab(tabId) {
       document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
       const target = document.getElementById("tab-" + tabId);
       if (target) target.classList.remove("hidden");
 
+      // Desktop / Tablet top buttons
       document.querySelectorAll(".tab-btn").forEach(btn => {
         btn.classList.remove("bg-coral-500", "text-white", "shadow-sm");
         btn.classList.add("text-harmony-700", "hover:bg-harmony-100");
       });
-
       const activeBtn = document.getElementById("tab-btn-" + tabId);
       if (activeBtn) {
         activeBtn.classList.add("bg-coral-500", "text-white", "shadow-sm");
         activeBtn.classList.remove("text-harmony-700", "hover:bg-harmony-100");
       }
 
+      // Mobile Bottom Bar buttons
+      document.querySelectorAll(".mobile-nav-btn").forEach(btn => {
+        btn.classList.remove("text-coral-500", "font-bold");
+        btn.classList.add("text-harmony-500", "font-semibold");
+      });
+      const activeMobileBtn = document.getElementById("mobile-nav-" + tabId);
+      if (activeMobileBtn) {
+        activeMobileBtn.classList.add("text-coral-500", "font-bold");
+        activeMobileBtn.classList.remove("text-harmony-500", "font-semibold");
+      }
+
       window.scrollTo({ top: 0, behavior: 'smooth' });
       lucide.createIcons();
+    }
+
+    // Mobile Kid View Segmented Switch (Ray vs Chloe on phones)
+    let currentMobileKid = 1;
+    function setMobileKidView(kidNum) {
+      currentMobileKid = kidNum;
+      const c1 = document.getElementById('kid1CardContainer');
+      const c2 = document.getElementById('kid2CardContainer');
+      const btn1 = document.getElementById('mobile-kid-btn-1');
+      const btn2 = document.getElementById('mobile-kid-btn-2');
+
+      if (window.innerWidth < 768) {
+        if (kidNum === 1) {
+          if (c1) c1.classList.remove('hidden');
+          if (c2) c2.classList.add('hidden');
+          if (btn1) {
+            btn1.classList.add('bg-white', 'text-sage-800', 'shadow-xs');
+            btn1.classList.remove('text-harmony-600');
+          }
+          if (btn2) {
+            btn2.classList.remove('bg-white', 'text-coral-800', 'shadow-xs');
+            btn2.classList.add('text-harmony-600');
+          }
+        } else {
+          if (c1) c1.classList.add('hidden');
+          if (c2) c2.classList.remove('hidden');
+          if (btn2) {
+            btn2.classList.add('bg-white', 'text-coral-800', 'shadow-xs');
+            btn2.classList.remove('text-harmony-600');
+          }
+          if (btn1) {
+            btn1.classList.remove('bg-white', 'text-sage-800', 'shadow-xs');
+            btn1.classList.add('text-harmony-600');
+          }
+        }
+      }
+    }
+
+    // Responsive listener for kid view
+    window.addEventListener('resize', () => {
+      const c1 = document.getElementById('kid1CardContainer');
+      const c2 = document.getElementById('kid2CardContainer');
+      if (window.innerWidth >= 768) {
+        if (c1) c1.classList.remove('hidden');
+        if (c2) c2.classList.remove('hidden');
+      } else {
+        setMobileKidView(currentMobileKid);
+      }
+    });
+
+    // Mobile Quick Action Sheet
+    function openMobileQuickSheet() {
+      document.getElementById('mobileQuickSheet').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeMobileQuickSheet() {
+      document.getElementById('mobileQuickSheet').classList.add('hidden');
+    }
+
+    // Install Guide Modal (Add to Home Screen)
+    function openInstallGuideModal() {
+      document.getElementById('installGuideModal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeInstallGuideModal() {
+      document.getElementById('installGuideModal').classList.add('hidden');
     }
 
     // Task Management
@@ -1420,8 +1669,8 @@
 
       if (filtered.length === 0) {
         container.innerHTML = `
-          <div class="text-center py-8 text-harmony-400 space-y-1">
-            <i data-lucide="sparkles" class="w-7 h-7 mx-auto opacity-40"></i>
+          <div class="text-center py-6 text-harmony-400 space-y-1">
+            <i data-lucide="sparkles" class="w-6 h-6 mx-auto opacity-40"></i>
             <p class="text-xs">No tasks in this view right now. You're in beautiful flow!</p>
           </div>
         `;
@@ -1430,48 +1679,41 @@
       }
 
       const slotLabels = {
-        "morning": "🌅 06:30 Morning",
-        "school-am": "🎵 Morning Periods",
-        "school-pm": "🎹 Afternoon Periods",
+        "morning": "🌅 Morning",
+        "school-am": "🎵 Morning P1-4",
+        "school-pm": "🎹 Afternoon P5-8",
         "cca-prep": "📋 Prep & CCA",
-        "kid-transit": "🎒 Kid Transit & Dinner",
-        "night": "🌙 Evening Wind-down"
+        "kid-transit": "🎒 Kid Transit",
+        "night": "🌙 Bedtime"
       };
 
       const categoryBadges = {
         "school": { text: "MOE Music", class: "bg-amber-100 text-amber-800 border-amber-200" },
-        "home": { text: "2 Kids & Home", class: "bg-sage-100 text-sage-800 border-sage-200" },
+        "home": { text: "2 Kids", class: "bg-sage-100 text-sage-800 border-sage-200" },
         "self": { text: "Me-Time", class: "bg-purple-100 text-purple-800 border-purple-200" }
-      };
-
-      const priorityPills = {
-        "urgent": "text-red-600 bg-red-50 border-red-200 font-bold",
-        "normal": "text-harmony-600 bg-harmony-50 border-harmony-200",
-        "low": "text-emerald-600 bg-emerald-50 border-emerald-200"
       };
 
       container.innerHTML = filtered.map(task => {
         const catInfo = categoryBadges[task.category] || categoryBadges.school;
-        const prioClass = priorityPills[task.priority] || priorityPills.normal;
         const slotText = slotLabels[task.slot] || task.slot;
 
         return `
-          <div class="group flex items-start justify-between gap-3 p-3 rounded-2xl border transition ${task.completed ? 'bg-harmony-50/70 border-harmony-200/50 opacity-60' : 'bg-white border-harmony-200 hover:border-coral-300 shadow-xs'}">
-            <div class="flex items-start gap-3 flex-1 min-w-0">
+          <div class="group flex items-start justify-between gap-2.5 p-2.5 sm:p-3 rounded-2xl border transition ${task.completed ? 'bg-harmony-50/70 border-harmony-200/50 opacity-60' : 'bg-white border-harmony-200 hover:border-coral-300 shadow-xs'}">
+            <div class="flex items-start gap-2.5 flex-1 min-w-0">
               <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask('${task.id}')" 
-                class="mt-1 w-4 h-4 rounded text-coral-500 focus:ring-0 cursor-pointer transition">
+                class="mt-1 w-4 h-4 rounded text-coral-500 focus:ring-0 cursor-pointer transition shrink-0">
               <div class="flex-1 min-w-0 space-y-1">
                 <p class="text-xs sm:text-sm font-medium ${task.completed ? 'line-through text-harmony-400' : 'text-harmony-900'} break-words">
                   ${escapeHtml(task.title)}
                 </p>
-                <div class="flex flex-wrap items-center gap-1.5 text-[10px]">
+                <div class="flex flex-wrap items-center gap-1.5 text-[9px] sm:text-[10px]">
                   <span class="px-2 py-0.5 rounded-full border ${catInfo.class}">${catInfo.text}</span>
                   <span class="px-1.5 py-0.5 rounded text-harmony-500 bg-harmony-100/60 font-medium">${slotText}</span>
                   ${task.priority === 'urgent' ? '<span class="px-1.5 py-0.5 rounded border text-red-700 bg-red-50 border-red-200 font-bold">● Urgent</span>' : ''}
                 </div>
               </div>
             </div>
-            <button onclick="deleteTask('${task.id}')" class="opacity-0 group-hover:opacity-100 p-1 text-harmony-400 hover:text-red-500 transition rounded" title="Delete">
+            <button onclick="deleteTask('${task.id}')" class="p-1.5 text-harmony-400 hover:text-red-500 transition rounded shrink-0 active:scale-95" title="Delete">
               <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
             </button>
           </div>
@@ -1503,6 +1745,11 @@
       const pk2gEl = document.getElementById("profileKid2Grade");
       if (pk2gEl) pk2gEl.innerText = k2Grade;
 
+      const mk1Label = document.getElementById("mobileKid1TabLabel");
+      if (mk1Label) mk1Label.innerText = k1Name;
+      const mk2Label = document.getElementById("mobileKid2TabLabel");
+      if (mk2Label) mk2Label.innerText = k2Name;
+
       const note1 = document.getElementById("kid1Notes");
       if (note1) note1.value = appData.kidNotes.kid1 || "";
       const note2 = document.getElementById("kid2Notes");
@@ -1517,10 +1764,10 @@
         c1.innerHTML = appData.kidChecklist.kid1.map(item => `
           <div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-sage-50/50 border border-sage-200/40">
             <label class="flex items-center gap-2 cursor-pointer flex-1">
-              <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleCustomKidCheck(1, '${item.id}')" class="rounded text-sage-600 focus:ring-0 w-3.5 h-3.5">
+              <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleCustomKidCheck(1, '${item.id}')" class="rounded text-sage-600 focus:ring-0 w-4 h-4 shrink-0">
               <span class="${item.done ? 'line-through text-harmony-400' : 'text-harmony-800'}">${escapeHtml(item.text)}</span>
             </label>
-            <button onclick="removeKidItem(1, '${item.id}')" class="text-harmony-400 hover:text-red-500 text-[10px]">✕</button>
+            <button onclick="removeKidItem(1, '${item.id}')" class="text-harmony-400 hover:text-red-500 text-[11px] p-1">✕</button>
           </div>
         `).join('');
       }
@@ -1529,10 +1776,10 @@
         c2.innerHTML = appData.kidChecklist.kid2.map(item => `
           <div class="flex items-center justify-between gap-2 p-2 rounded-xl bg-coral-50/50 border border-coral-200/40">
             <label class="flex items-center gap-2 cursor-pointer flex-1">
-              <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleCustomKidCheck(2, '${item.id}')" class="rounded text-coral-600 focus:ring-0 w-3.5 h-3.5">
+              <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleCustomKidCheck(2, '${item.id}')" class="rounded text-coral-600 focus:ring-0 w-4 h-4 shrink-0">
               <span class="${item.done ? 'line-through text-harmony-400' : 'text-harmony-800'}">${escapeHtml(item.text)}</span>
             </label>
-            <button onclick="removeKidItem(2, '${item.id}')" class="text-harmony-400 hover:text-red-500 text-[10px]">✕</button>
+            <button onclick="removeKidItem(2, '${item.id}')" class="text-harmony-400 hover:text-red-500 text-[11px] p-1">✕</button>
           </div>
         `).join('');
       }
@@ -1663,16 +1910,16 @@
       if (!container || !gradeData) return;
 
       container.innerHTML = `
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
           <!-- Grade Overview Left (7 cols) -->
-          <div class="lg:col-span-7 bg-white rounded-3xl p-6 border border-harmony-200 shadow-sm space-y-4">
-            <div class="flex items-center justify-between pb-3 border-b border-harmony-100">
+          <div class="lg:col-span-7 bg-white rounded-3xl p-4 sm:p-6 border border-harmony-200 shadow-sm space-y-3.5">
+            <div class="flex items-center justify-between pb-2.5 border-b border-harmony-100">
               <div>
-                <span class="text-xs font-bold text-coral-600 uppercase tracking-wider">${gradeData.grade} (${gradeData.ageRange})</span>
-                <h3 class="text-xl font-bold font-serif text-harmony-900">${gradeData.focus}</h3>
+                <span class="text-[10px] sm:text-xs font-bold text-coral-600 uppercase tracking-wider">${gradeData.grade} (${gradeData.ageRange})</span>
+                <h3 class="text-lg sm:text-xl font-bold font-serif text-harmony-900 leading-snug">${gradeData.focus}</h3>
               </div>
-              <button onclick="prefillLessonPlanForGrade('${gradeData.grade}', '${escapeHtml(gradeData.repertoire[0])}')" class="text-xs font-semibold text-coral-600 hover:text-coral-700 flex items-center gap-1">
-                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Plan this Grade
+              <button onclick="prefillLessonPlanForGrade('${gradeData.grade}', '${escapeHtml(gradeData.repertoire[0])}')" class="text-xs font-semibold text-coral-600 hover:text-coral-700 flex items-center gap-1 shrink-0 p-1">
+                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Plan
               </button>
             </div>
             
@@ -1694,27 +1941,27 @@
             </div>
 
             <!-- Instruments in Use -->
-            <div class="pt-3 border-t border-harmony-100">
-              <h4 class="text-xs font-bold text-harmony-800 mb-2 flex items-center gap-1.5">
+            <div class="pt-2.5 border-t border-harmony-100">
+              <h4 class="text-xs font-bold text-harmony-800 mb-1.5 flex items-center gap-1.5">
                 <i data-lucide="guitar" class="w-4 h-4 text-amber-500"></i> Recommended Instruments & Gear:
               </h4>
               <div class="flex flex-wrap gap-1.5">
                 ${gradeData.instruments.map(inst => `
-                  <span class="bg-amber-50 text-amber-800 border border-amber-200 text-[11px] px-2.5 py-1 rounded-lg font-medium">${inst}</span>
+                  <span class="bg-amber-50 text-amber-800 border border-amber-200 text-[10px] sm:text-[11px] px-2.5 py-1 rounded-lg font-medium">${inst}</span>
                 `).join('')}
               </div>
             </div>
           </div>
 
           <!-- Suggested Term Progression Right (5 cols) -->
-          <div class="lg:col-span-5 bg-white rounded-3xl p-6 border border-harmony-200 shadow-sm space-y-4">
+          <div class="lg:col-span-5 bg-white rounded-3xl p-4 sm:p-6 border border-harmony-200 shadow-sm space-y-3.5">
             <h4 class="text-xs font-bold uppercase tracking-wider text-harmony-800 flex items-center gap-1.5">
-              <i data-lucide="compass" class="w-4 h-4 text-sage-600"></i> Term-by-Term Scheme of Work Sparks
+              <i data-lucide="compass" class="w-4 h-4 text-sage-600"></i> Scheme of Work Sparks
             </h4>
             
-            <div class="space-y-2.5 text-xs">
+            <div class="space-y-2 text-xs">
               ${gradeData.termIdeas.map(t => `
-                <div class="p-3 bg-[#faf7f5] rounded-2xl border border-harmony-200/70 space-y-1">
+                <div class="p-2.5 sm:p-3 bg-[#faf7f5] rounded-2xl border border-harmony-200/70 space-y-0.5">
                   <div class="flex items-center justify-between">
                     <span class="font-bold text-coral-700">${t.term}</span>
                     <span class="text-[10px] bg-white px-2 py-0.5 rounded border border-harmony-200 text-harmony-700 font-medium">${t.theme}</span>
@@ -1726,7 +1973,7 @@
 
             <!-- Representative Repertoire -->
             <div class="pt-2 border-t border-harmony-100">
-              <h5 class="text-[11px] font-bold text-harmony-700 mb-1.5">Key Songs / Cultural Works:</h5>
+              <h5 class="text-[11px] font-bold text-harmony-700 mb-1">Key Songs / Cultural Works:</h5>
               <div class="space-y-1 text-xs text-harmony-600">
                 ${gradeData.repertoire.map(song => `
                   <div class="flex items-center gap-2">
@@ -1777,7 +2024,7 @@
 
       if (filtered.length === 0) {
         container.innerHTML = `
-          <div class="col-span-full text-center py-12 text-harmony-400">
+          <div class="col-span-full text-center py-8 text-harmony-400">
             <p>No matching activities found for "${query}". Try searching "rhythm", "recorder", or "movement".</p>
           </div>
         `;
@@ -1785,22 +2032,22 @@
       }
 
       container.innerHTML = filtered.map(spark => `
-        <div class="bg-white rounded-3xl p-5 border border-harmony-200 shadow-sm hover:border-coral-300 transition space-y-3 flex flex-col justify-between">
-          <div class="space-y-2.5">
+        <div class="bg-white rounded-3xl p-4 sm:p-5 border border-harmony-200 shadow-sm hover:border-coral-300 transition space-y-2.5 flex flex-col justify-between">
+          <div class="space-y-2">
             <div class="flex items-center justify-between gap-2">
-              <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-coral-100 text-coral-700">${spark.level}</span>
-              <span class="text-[11px] text-harmony-500 flex items-center gap-1 font-mono">
+              <span class="text-[9px] sm:text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-coral-100 text-coral-700">${spark.level}</span>
+              <span class="text-[10px] sm:text-[11px] text-harmony-500 flex items-center gap-1 font-mono">
                 <i data-lucide="clock" class="w-3 h-3 text-coral-500"></i> ${spark.duration}
               </span>
             </div>
-            <h4 class="font-bold text-harmony-900 text-sm leading-snug">${spark.title}</h4>
-            <span class="inline-block text-[10px] font-semibold text-harmony-600 bg-harmony-100 px-2 py-0.5 rounded">${spark.domain}</span>
+            <h4 class="font-bold text-harmony-900 text-xs sm:text-sm leading-snug">${spark.title}</h4>
+            <span class="inline-block text-[9px] sm:text-[10px] font-semibold text-harmony-600 bg-harmony-100 px-2 py-0.5 rounded">${spark.domain}</span>
             <p class="text-xs text-harmony-600 leading-relaxed">${spark.desc}</p>
           </div>
 
-          <div class="pt-3 border-t border-harmony-100 flex items-center justify-between text-xs">
-            <span class="text-[10px] text-harmony-400 truncate max-w-[150px]">${spark.materials}</span>
-            <button onclick="quickAddSparkTask('${escapeHtml(spark.title)}')" class="text-coral-600 hover:text-coral-700 font-semibold flex items-center gap-1 text-[11px]">
+          <div class="pt-2.5 border-t border-harmony-100 flex items-center justify-between text-xs">
+            <span class="text-[10px] text-harmony-400 truncate max-w-[140px]">${spark.materials}</span>
+            <button onclick="quickAddSparkTask('${escapeHtml(spark.title)}')" class="text-coral-600 hover:text-coral-700 font-semibold flex items-center gap-1 text-[11px] active:scale-95">
               <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Teach Today
             </button>
           </div>
@@ -1829,13 +2076,12 @@
       const container = document.getElementById('homeSparksGrid');
       if (!container) return;
 
-      // Shuffle and pick 3
       const shuffled = [...HOME_SPARKS_DB].sort(() => 0.5 - Math.random()).slice(0, 3);
       container.innerHTML = shuffled.map(s => `
-        <div class="bg-[#faf7f5] rounded-2xl p-4 border border-harmony-200/80 space-y-2">
+        <div class="bg-[#faf7f5] rounded-2xl p-3 sm:p-4 border border-harmony-200/80 space-y-1.5">
           <div class="flex items-center justify-between">
-            <span class="text-xl">${s.icon}</span>
-            <span class="text-[10px] bg-white border border-harmony-200 px-2 py-0.5 rounded text-harmony-600 font-mono">${s.time}</span>
+            <span class="text-lg sm:text-xl">${s.icon}</span>
+            <span class="text-[9px] sm:text-[10px] bg-white border border-harmony-200 px-2 py-0.5 rounded text-harmony-600 font-mono">${s.time}</span>
           </div>
           <h4 class="font-bold text-harmony-900 text-xs">${s.title}</h4>
           <p class="text-xs text-harmony-600 leading-relaxed">${s.desc}</p>
@@ -1891,26 +2137,26 @@
 
       if (plans.length === 0) {
         container.innerHTML = `
-          <div class="col-span-full text-center py-8 text-harmony-400">
-            <p class="text-xs">No saved lesson plans yet. Click "Draft New Lesson Plan" to create one!</p>
+          <div class="col-span-full text-center py-6 text-harmony-400">
+            <p class="text-xs">No saved lesson plans yet. Tap "Draft Lesson Plan" to create one!</p>
           </div>
         `;
         return;
       }
 
       container.innerHTML = plans.map(p => `
-        <div class="bg-[#faf7f5] rounded-2xl p-4 border border-harmony-200/80 space-y-2.5 flex flex-col justify-between">
-          <div class="space-y-1.5">
+        <div class="bg-[#faf7f5] rounded-2xl p-3 sm:p-4 border border-harmony-200/80 space-y-2 flex flex-col justify-between">
+          <div class="space-y-1">
             <div class="flex items-center justify-between text-[10px]">
               <span class="bg-coral-100 text-coral-800 font-bold px-2 py-0.5 rounded">${p.grade}</span>
               <span class="text-harmony-400">${p.termWeek}</span>
             </div>
-            <h4 class="font-bold text-harmony-900 text-sm leading-snug">${escapeHtml(p.topic)}</h4>
-            <p class="text-xs text-harmony-600 line-clamp-2"><strong>Core:</strong> ${escapeHtml(p.core || p.outcomes)}</p>
+            <h4 class="font-bold text-harmony-900 text-xs sm:text-sm leading-snug">${escapeHtml(p.topic)}</h4>
+            <p class="text-[11px] sm:text-xs text-harmony-600 line-clamp-2"><strong>Core:</strong> ${escapeHtml(p.core || p.outcomes)}</p>
           </div>
           <div class="pt-2 border-t border-harmony-200/60 flex items-center justify-between text-xs">
             <span class="text-[10px] text-harmony-400">${p.duration}</span>
-            <button onclick="deleteLessonPlan('${p.id}')" class="text-red-500 hover:text-red-700 text-xs font-semibold">Delete</button>
+            <button onclick="deleteLessonPlan('${p.id}')" class="text-red-500 hover:text-red-700 text-xs font-semibold p-1">Delete</button>
           </div>
         </div>
       `).join('');
@@ -1947,7 +2193,7 @@
 
       const countSumEl = document.getElementById('taskCountSummary');
       if (countSumEl) {
-        countSumEl.innerText = `${appData.tasks.length} total tasks • ${totalTasks - completedTasks} remaining`;
+        countSumEl.innerText = `${appData.tasks.length} tasks • ${totalTasks - completedTasks} left`;
       }
 
       // Tempo mood
@@ -2038,6 +2284,7 @@
       showGradeSyllabus('p3');
       renderSparksGrid();
       renderNewHomeSparks();
+      setMobileKidView(1);
       updateUI();
       lucide.createIcons();
     });
